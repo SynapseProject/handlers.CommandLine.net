@@ -15,8 +15,8 @@ namespace Synapse.CommandLine.Handler
 {
     public partial class HandlerConfig
     {
-        [XmlArrayItem(ElementName = "Server")]
-        public List<String> Servers { get; set; }
+        [XmlElement]
+        public String RunOn { get; set; }
         [XmlElement]
         public String WorkingDirectory { get; set; }
         [XmlElement]
@@ -29,12 +29,7 @@ namespace Synapse.CommandLine.Handler
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            if (Servers?.Count > 0)
-            {
-                sb.AppendLine("Servers : ");
-                foreach (String server in Servers)
-                    sb.AppendLine("  - " + server);
-            }
+            if (!String.IsNullOrWhiteSpace(RunOn)) { sb.AppendLine("RunOn            : " + RunOn); }
             if (!String.IsNullOrWhiteSpace(WorkingDirectory)) { sb.AppendLine("WorkingDirectory : " + WorkingDirectory); }
             if (!String.IsNullOrWhiteSpace(Command)) { sb.AppendLine("Command          : " + Command); }
             sb.AppendLine("TimeoutMills     : " + TimeoutMills);

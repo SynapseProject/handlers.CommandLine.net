@@ -35,7 +35,10 @@ public class CommandLineHandler : HandlerRuntimeBase
         Console.WriteLine(parameters);
 
         String args = ProcessArguments(parameters);
-        LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction);
+        if (String.IsNullOrEmpty(config.RunOn))
+            LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction);
+        else
+            WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, null, null);
 
         //TODO : Debug - Delete Me
         Console.WriteLine("Press <ENTER> To Continue.");

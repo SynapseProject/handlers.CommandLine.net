@@ -12,6 +12,9 @@ namespace Synapse.CommandLine.Handler
     {
         public static Int32 RunCommand(String command, String args, String remoteWorkingDirectory, long timeoutMills = 0, TimeoutActionType actionOnTimeout = TimeoutActionType.Error, Action<string, string> callback = null, String callbackLabel = null)
         {
+            if (callback == null)
+                callback = LogTailer.ConsoleWriter;
+
             Process process = new Process();
             process.StartInfo.FileName = command;
             process.StartInfo.Arguments = args;
@@ -25,11 +28,6 @@ namespace Synapse.CommandLine.Handler
 
             if (callback != null)
                 callback(callbackLabel, "Starting Command : " + command + " " + args);
-            else
-            {
-                Console.WriteLine("Starting Command : " + command + " " + args);
-                Console.WriteLine("-----------------------------------------------");
-            }
 
             process.Start();
 
@@ -41,8 +39,6 @@ namespace Synapse.CommandLine.Handler
                     String line = process.StandardOutput.ReadLine();
                     if (callback != null)
                         callback(callbackLabel, line);
-                    else
-                        Console.WriteLine("STDOUT : " + line);
                 }
             });
             stdOutReader.Start();
@@ -54,8 +50,6 @@ namespace Synapse.CommandLine.Handler
                     String line = process.StandardError.ReadLine();
                     if (callback != null)
                         callback(callbackLabel, line);
-                    else
-                        Console.WriteLine("STDERR : " + line);
                 }
             });
             stdErrReader.Start();
@@ -84,16 +78,12 @@ namespace Synapse.CommandLine.Handler
                     process.Kill();
                     if (callback != null)
                         callback(callbackLabel, timeoutMessage);
-                    else
-                        Console.WriteLine(timeoutMessage);
                 }
                 else
                 {
                     timeoutMessage = "TIMEOUT : Process [" + process.ProcessName + "] With Id [" + process.Id + "] Failed To Stop In [" + timeoutMills + "] Milliseconds But May Have Completed.";
                     if (callback != null)
                         callback(callbackLabel, timeoutMessage);
-                    else
-                        Console.WriteLine(timeoutMessage);
                 }
                 if (actionOnTimeout == TimeoutActionType.Error || actionOnTimeout == TimeoutActionType.KillProcessAndError)
                 {

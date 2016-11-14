@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Xml;
+using System.Diagnostics;
 
 using Synapse.Core.Utilities;
 
 namespace Synapse.CommandLine.Handler
 {
-    class HandlerUtils
+    public static class HandlerUtils
     {
         public static T Deserialize<T>(String str)
         {
@@ -59,6 +60,11 @@ namespace Synapse.CommandLine.Handler
                 str = obj.ToString();
 
             return str;
+        }
+
+        public static double ElapsedSeconds(this Stopwatch stopwatch)
+        {
+            return TimeSpan.FromMilliseconds(stopwatch.ElapsedMilliseconds).TotalSeconds;
         }
 
     }
