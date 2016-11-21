@@ -103,10 +103,6 @@ namespace Synapse.CommandLine.Handler
                                 }
                                 tailer.Stop(60, true);
 
-                                //TODO : Debug - Delete Me
-                                Console.WriteLine("Press <ENTER> To Continue.");
-                                Console.ReadLine();
-
                                 throw new Exception(timeoutMessage);
                             }
                             else
@@ -154,10 +150,6 @@ namespace Synapse.CommandLine.Handler
 
             if (callback != null)
                 callback(callbackLabel, "Command Completed.  Exit Code = " + exitStatus);
-
-            //TODO : Debug - Delete Me
-            Console.WriteLine("Press <ENTER> To Continue.");
-            Console.ReadLine();
 
             return exitStatus;
         }

@@ -87,9 +87,6 @@ namespace Synapse.CommandLine.Handler
                 }
                 if (actionOnTimeout == TimeoutActionType.Error || actionOnTimeout == TimeoutActionType.KillProcessAndError)
                 {
-                    //TODO : Debug - Delete Me
-                    Console.WriteLine("Press <ENTER> To Continue.");
-                    Console.ReadLine();
                     throw new Exception(timeoutMessage);
                 }
             }
