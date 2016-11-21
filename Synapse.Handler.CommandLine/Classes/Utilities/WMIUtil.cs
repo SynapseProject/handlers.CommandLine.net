@@ -60,8 +60,8 @@ namespace Synapse.CommandLine.Handler
                         processId = (uint)mbo["ProcessId"];
 
                         // Start Tailing Output Log
-                        //                        LogTailer tailer = new LogTailer(winUncOutFile, callback, callbackLabel);
-                        //                        tailer.Start();
+                        LogTailer tailer = new LogTailer(server, Path.Combine(remoteWorkingDirectory, stdOutErrFile), callback, callbackLabel);
+                        tailer.Start();
 
                         // Wait For Process To Finish or Timeout To Be Reached
                         ManagementEventWatcher w = new ManagementEventWatcher(scope, new WqlEventQuery("select * from Win32_ProcessStopTrace where ProcessId=" + processId));
@@ -75,7 +75,7 @@ namespace Synapse.CommandLine.Handler
                         } 
                         catch (ManagementException ex)
                         {
-                            if (ex.Message.Contains("Timed out"))
+                         if (ex.Message.Contains("Timed out"))
                             {
                                 StringBuilder rc = new StringBuilder();
                                 String processName = @"cmd.exe";
@@ -101,7 +101,7 @@ namespace Synapse.CommandLine.Handler
 
                                     timeoutMessage = "TIMEOUT : Process [" + processName + "] With Id [" + processId + "] Failed To Stop In [" + timeoutMills + "] Milliseconds And Was Remotely Termintated.";
                                 }
-//                                tailer.Stop(5);
+                                tailer.Stop(60, true);
 
                                 //TODO : Debug - Delete Me
                                 Console.WriteLine("Press <ENTER> To Continue.");
@@ -111,16 +111,13 @@ namespace Synapse.CommandLine.Handler
                             }
                             else
                             {
-//                                tailer.Stop(5);
+                                tailer.Stop(60, true);
                                 throw ex;
                             }
                         }
 
-                        // Stop Tailing Output Log
-//                        tailer.Stop(10);
+                        tailer.Stop(300, true);
 
-                        // Cleanup Output Log
-                        
                     }
                     else
                     {

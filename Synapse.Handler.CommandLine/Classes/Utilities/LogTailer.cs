@@ -17,8 +17,21 @@ namespace Synapse.CommandLine.Handler
 
         bool stop = false;
         Thread thread = null;
+        StreamReader reader = null;
 
         public LogTailer() { }
+
+        public LogTailer(String server, string fileName, Action<string, string> callback = null, String callbackLabel = null)
+        {
+            FileName = "\\\\" + server + "\\" + fileName.Replace(':', '$');
+
+            if (callback != null)
+                Callback = callback;
+            else
+                Callback = LogTailer.ConsoleWriter;
+
+            CallbackLabel = callbackLabel;
+        }
 
         public LogTailer(String fileName, Action<string, string> callback = null, String callbackLabel = null)
         {
@@ -38,7 +51,7 @@ namespace Synapse.CommandLine.Handler
             thread.Start();
         }
 
-        public void Stop(double timeoutSeconds = 0)
+        public void Stop(double timeoutSeconds = 0, bool deleteFile = false)
         {
             stop = true;
             
@@ -51,6 +64,9 @@ namespace Synapse.CommandLine.Handler
                 if (clock.ElapsedSeconds() > timeoutSeconds)
                 {
                     thread.Abort();
+                    Callback(CallbackLabel, "LogTailer Thread Did Not Stop In " + timeoutSeconds + " Seconds.  Thread Aborted.");
+                    reader.Close();
+                    reader.Dispose();
                     Thread.Sleep(1000);
                 }
                 else
@@ -59,11 +75,18 @@ namespace Synapse.CommandLine.Handler
 
             if (timeoutSeconds > 0)
                 clock.Stop();
+
+            if (deleteFile)
+                DeleteFile();
+        }
+
+        public void DeleteFile()
+        {
+            File.Delete(FileName);
         }
 
         void TailLog()
         {
-            StreamReader reader = null;
             if (FileName != null)
             {
                 try { reader = new StreamReader(new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)); }

@@ -40,10 +40,6 @@ public class CommandLineHandler : HandlerRuntimeBase
         else
             WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, null, null);
 
-        //TODO : Debug - Delete Me
-        Console.WriteLine("Press <ENTER> To Continue.");
-        Console.ReadLine();
-
         return new ExecuteResult() { Status = StatusType.Complete };
     }
 
