@@ -82,7 +82,14 @@ namespace Synapse.CommandLine.Handler
 
         public void DeleteFile()
         {
-            File.Delete(FileName);
+            try
+            {
+                File.Delete(FileName);
+            }
+            catch (Exception e)
+            {
+                Callback(CallbackLabel, "Unable To Delete File [" + FileName + "]");
+            }
         }
 
         void TailLog()
