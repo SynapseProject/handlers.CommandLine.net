@@ -30,15 +30,14 @@ public class CommandLineHandler : HandlerRuntimeBase
 
     override public ExecuteResult Execute(HandlerStartInfo startInfo)
     {
-
         parameters = HandlerUtils.Deserialize<HandlerParameters>(startInfo.Parameters);
         Console.WriteLine(parameters);
 
         String args = ProcessArguments(parameters);
         if (String.IsNullOrEmpty(config.RunOn))
-            LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction);
+            LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, null, null, startInfo.IsDryRun);
         else
-            WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, null, null);
+            WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, null, null, startInfo.IsDryRun);
 
         return new ExecuteResult() { Status = StatusType.Complete };
     }
