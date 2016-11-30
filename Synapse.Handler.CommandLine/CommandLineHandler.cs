@@ -48,10 +48,6 @@ public class CommandLineHandler : HandlerRuntimeBase
             status = StatusType.Failed;
         }
 
-        //TODO : Delete Me Before Production
-        Console.WriteLine("Press <ENTER> To Continue.");
-        Console.ReadLine();
-
         return new ExecuteResult() { Status = status };
     }
 
