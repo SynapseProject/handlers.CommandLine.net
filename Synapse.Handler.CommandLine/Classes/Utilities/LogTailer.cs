@@ -14,14 +14,15 @@ namespace Synapse.CommandLine.Handler
         public String FileName { get; set; }
         public Action<string, string> Callback { get; set; }
         public String CallbackLabel { get; set; }
+        public int PollingIntervalMills { get; set; }
 
         bool stop = false;
         Thread thread = null;
         StreamReader reader = null;
 
-        public LogTailer() { }
+        public LogTailer() { PollingIntervalMills = 1000; }
 
-        public LogTailer(String server, string fileName, Action<string, string> callback = null, String callbackLabel = null)
+        public LogTailer(String server, string fileName, Action<string, string> callback = null, String callbackLabel = null, int pollingIntervalMills = 1000)
         {
             FileName = "\\\\" + server + "\\" + fileName.Replace(':', '$');
 
@@ -31,6 +32,7 @@ namespace Synapse.CommandLine.Handler
                 Callback = LogTailer.ConsoleWriter;
 
             CallbackLabel = callbackLabel;
+            PollingIntervalMills = pollingIntervalMills;
         }
 
         public LogTailer(String fileName, Action<string, string> callback = null, String callbackLabel = null)
@@ -67,10 +69,10 @@ namespace Synapse.CommandLine.Handler
                     Callback(CallbackLabel, "LogTailer Thread Did Not Stop In " + timeoutSeconds + " Seconds.  Thread Aborted.");
                     reader.Close();
                     reader.Dispose();
-                    Thread.Sleep(1000);
+                    Thread.Sleep(PollingIntervalMills);
                 }
                 else
-                    Thread.Sleep(1000);
+                    Thread.Sleep(PollingIntervalMills);
             }
 
             if (timeoutSeconds > 0)
@@ -147,14 +149,14 @@ namespace Synapse.CommandLine.Handler
                     }
                 }
 
-                Thread.Sleep(1000);
+                Thread.Sleep(PollingIntervalMills);
             } // End While
 
             if (reader == null && FileName != null && stop == true)
             {
                 // Stop Command Recieved, But Still Haven't Been Able To Get The Output File.  
                 // Pause A Bit And Give It One Last Try.
-                Thread.Sleep(5000);
+                Thread.Sleep(PollingIntervalMills * 5);
                 try { reader = new StreamReader(new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)); }
                 catch
                 {
