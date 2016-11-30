@@ -88,6 +88,7 @@ namespace Synapse.CommandLine.Handler
             }
             catch (Exception e)
             {
+                Callback(CallbackLabel, e.Message);
                 Callback(CallbackLabel, "Unable To Delete File [" + FileName + "]");
             }
         }

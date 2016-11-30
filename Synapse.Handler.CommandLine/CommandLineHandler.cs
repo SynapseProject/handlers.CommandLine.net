@@ -33,13 +33,26 @@ public class CommandLineHandler : HandlerRuntimeBase
         parameters = HandlerUtils.Deserialize<HandlerParameters>(startInfo.Parameters);
         Console.WriteLine(parameters);
 
-        String args = ProcessArguments(parameters);
-        if (String.IsNullOrEmpty(config.RunOn))
-            LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, null, null, startInfo.IsDryRun);
-        else
-            WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, null, null, startInfo.IsDryRun);
+        StatusType status = StatusType.Complete;
 
-        return new ExecuteResult() { Status = StatusType.Complete };
+        try
+        {
+            String args = ProcessArguments(parameters);
+            if (String.IsNullOrEmpty(config.RunOn))
+                LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, null, null, startInfo.IsDryRun);
+            else
+                WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, null, null, startInfo.IsDryRun);
+        }
+        catch (Exception e)
+        {
+            status = StatusType.Failed;
+        }
+
+        //TODO : Delete Me Before Production
+        Console.WriteLine("Press <ENTER> To Continue.");
+        Console.ReadLine();
+
+        return new ExecuteResult() { Status = status };
     }
 
     private String ProcessArguments(HandlerParameters parms)
