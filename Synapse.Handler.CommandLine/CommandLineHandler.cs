@@ -43,7 +43,7 @@ public class CommandLineHandler : HandlerRuntimeBase
             else
                 WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, null, null, startInfo.IsDryRun);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             status = StatusType.Failed;
         }
