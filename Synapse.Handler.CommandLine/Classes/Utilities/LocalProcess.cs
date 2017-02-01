@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-namespace Synapse.CommandLine.Handler
+namespace Synapse.Handlers.CommandLine
 {
     class LocalProcess
     {

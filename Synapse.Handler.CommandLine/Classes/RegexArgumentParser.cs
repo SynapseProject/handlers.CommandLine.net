@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Xml;
 
-namespace Synapse.CommandLine.Handler
+namespace Synapse.Handlers.CommandLine
 {
     public partial class RegexArgumentParser
     {

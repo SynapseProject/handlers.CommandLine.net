@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 
-namespace Synapse.CommandLine.Handler
+namespace Synapse.Handlers.CommandLine
 {
     public partial class RegexArgumentParser
     {

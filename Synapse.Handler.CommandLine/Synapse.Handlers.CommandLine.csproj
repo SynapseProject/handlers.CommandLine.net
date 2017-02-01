@@ -7,8 +7,8 @@
     <ProjectGuid>{2D2E61B0-B344-4448-ADF7-743F26A0A8C0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Synapse.CommandLine.Handler</RootNamespace>
-    <AssemblyName>Synapse.Handler.CommandLine</AssemblyName>
+    <RootNamespace>Synapse.Handlers.CommandLine</RootNamespace>
+    <AssemblyName>Synapse.Handlers.CommandLine</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

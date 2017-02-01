@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 
-namespace Synapse.CommandLine.Handler
+namespace Synapse.Handlers.CommandLine
 {
     public static class WMIUtil
     {

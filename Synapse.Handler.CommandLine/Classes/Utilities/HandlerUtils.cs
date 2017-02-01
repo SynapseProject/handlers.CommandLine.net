@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 using Synapse.Core.Utilities;
 
-namespace Synapse.CommandLine.Handler
+namespace Synapse.Handlers.CommandLine
 {
     public static class HandlerUtils
     {

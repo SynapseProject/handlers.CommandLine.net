@@ -12,14 +12,13 @@ using YamlDotNet.Serialization;
 
 using Synapse.Core;
 using Synapse.Core.Utilities;
-using Synapse.CommandLine.Handler;
+using Synapse.Handlers.CommandLine;
 
 public class CommandLineHandler : HandlerRuntimeBase
 {
     HandlerConfig config = null;
     HandlerParameters parameters = null;
 
-    //TODO : Debug - Remove Enternal Program Debugger In Project > Properties > Debug Section
     public override IHandlerRuntime Initialize(string configStr)
     {
         config = HandlerUtils.Deserialize<HandlerConfig>(configStr);
