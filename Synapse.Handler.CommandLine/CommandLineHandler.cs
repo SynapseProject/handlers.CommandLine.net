@@ -29,18 +29,17 @@ public class CommandLineHandler : HandlerRuntimeBase
 
     override public ExecuteResult Execute(HandlerStartInfo startInfo)
     {
+        ExecuteResult result = null;
         parameters = HandlerUtils.Deserialize<HandlerParameters>(startInfo.Parameters);
         Console.WriteLine(parameters);
-
-        StatusType status = StatusType.Complete;
 
         try
         {
             String args = ProcessArguments(parameters);
             if (String.IsNullOrEmpty(config.RunOn))
-                LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, SynapseLogger, null, startInfo.IsDryRun);
+                result = LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, SynapseLogger, null, startInfo.IsDryRun);
             else
-                WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, SynapseLogger, config.RunOn, startInfo.IsDryRun);
+                result = WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, SynapseLogger, config.RunOn, startInfo.IsDryRun);
         }
         catch (Exception e)
         {
@@ -49,7 +48,7 @@ public class CommandLineHandler : HandlerRuntimeBase
             throw e;
         }
 
-        return new ExecuteResult() { Status = status };
+        return result;
     }
 
     private String ProcessArguments(HandlerParameters parms)

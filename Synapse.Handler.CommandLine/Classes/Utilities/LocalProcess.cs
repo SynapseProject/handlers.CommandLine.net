@@ -6,12 +6,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
+using Synapse.Core;
+
 namespace Synapse.Handlers.CommandLine
 {
     class LocalProcess
     {
-        public static Int32 RunCommand(String command, String args, String remoteWorkingDirectory, long timeoutMills = 0, TimeoutActionType actionOnTimeout = TimeoutActionType.Error, Action<string, string> callback = null, String callbackLabel = null, bool dryRun = false)
+        public static ExecuteResult RunCommand(String command, String args, String remoteWorkingDirectory, long timeoutMills = 0, TimeoutActionType actionOnTimeout = TimeoutActionType.Error, Action<string, string> callback = null, String callbackLabel = null, bool dryRun = false)
         {
+            ExecuteResult result = new ExecuteResult();
             int exitCode = 0;
             if (callback == null)
                 callback = LogTailer.ConsoleWriter;
@@ -26,8 +29,7 @@ namespace Synapse.Handlers.CommandLine
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.UseShellExecute = false;
 
-            if (callback != null)
-                callback(callbackLabel, "Starting Command : " + command + " " + args);
+            callback?.Invoke(callbackLabel, "Starting Command : " + command + " " + args);
 
             if (!dryRun)
             {
@@ -38,8 +40,7 @@ namespace Synapse.Handlers.CommandLine
                     while (!process.StandardOutput.EndOfStream)
                     {
                         String line = process.StandardOutput.ReadLine();
-                        if (callback != null)
-                            callback(callbackLabel, line);
+                        callback?.Invoke(callbackLabel, line);
                     }
                 });
                 stdOutReader.Start();
@@ -49,8 +50,7 @@ namespace Synapse.Handlers.CommandLine
                     while (!process.StandardError.EndOfStream)
                     {
                         String line = process.StandardError.ReadLine();
-                        if (callback != null)
-                            callback(callbackLabel, line);
+                        callback?.Invoke(callbackLabel, line);
                     }
                 });
                 stdErrReader.Start();
@@ -77,14 +77,12 @@ namespace Synapse.Handlers.CommandLine
                     if (!process.HasExited)
                     {
                         process.Kill();
-                        if (callback != null)
-                            callback(callbackLabel, timeoutMessage);
+                        callback?.Invoke(callbackLabel, timeoutMessage);
                     }
                     else
                     {
                         timeoutMessage = "TIMEOUT : Process [" + process.ProcessName + "] With Id [" + process.Id + "] Failed To Stop In [" + timeoutMills + "] Milliseconds But May Have Completed.";
-                        if (callback != null)
-                            callback(callbackLabel, timeoutMessage);
+                        callback?.Invoke(callbackLabel, timeoutMessage);
                     }
                     if (actionOnTimeout == TimeoutActionType.Error || actionOnTimeout == TimeoutActionType.KillProcessAndError)
                     {
@@ -95,10 +93,12 @@ namespace Synapse.Handlers.CommandLine
                 exitCode = process.ExitCode;
             }
 
-            if (callback != null)
-                callback(callbackLabel, "Command Completed.  Exit Code = " + exitCode);
+            result.Status = StatusType.Complete;
+            result.ExitData = exitCode;
+            result.Message = "Command Completed.  Exit Code = " + exitCode;
+            callback?.Invoke(callbackLabel, result.Message);
 
-            return exitCode;
+            return result;
             
         }
     }
