@@ -38,9 +38,9 @@ public class CommandLineHandler : HandlerRuntimeBase
         {
             String args = ProcessArguments(parameters);
             if (String.IsNullOrEmpty(config.RunOn))
-                LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, null, null, startInfo.IsDryRun);
+                LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, SynapseLogger, null, startInfo.IsDryRun);
             else
-                WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, null, null, startInfo.IsDryRun);
+                WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, SynapseLogger, config.RunOn, startInfo.IsDryRun);
         }
         catch (Exception e)
         {
@@ -75,4 +75,10 @@ public class CommandLineHandler : HandlerRuntimeBase
 
         return args;
     }
+
+    public void SynapseLogger(String label, String message)
+    {
+        OnLogMessage(label, message);
+    }
+
 }
