@@ -8,6 +8,7 @@ using System.Threading;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
+using Synapse.Core;
 
 namespace Synapse.Handlers.CommandLine
 {
@@ -15,8 +16,9 @@ namespace Synapse.Handlers.CommandLine
     {
         #region Public Methods - RunCommand
 
-        public static Int32 RunCommand(String command, String args, String server, String remoteWorkingDirectory, long timeoutMills, TimeoutActionType actionOnTimeout, Action<string, string> callback = null, string callbackLabel = null, bool dryRun = false)
+        public static ExecuteResult RunCommand(String command, String args, String server, String remoteWorkingDirectory, long timeoutMills, TimeoutActionType actionOnTimeout, Action<string, string> callback = null, string callbackLabel = null, bool dryRun = false)
         {
+            ExecuteResult result = new ExecuteResult();
             if (callback == null)
                 callback = LogTailer.ConsoleWriter;
 
@@ -30,8 +32,7 @@ namespace Synapse.Handlers.CommandLine
             if (!String.IsNullOrWhiteSpace(args))
                 cmd = command + " " + args;
 
-            if (callback != null)
-                callback(callbackLabel, "Starting Command : " + cmd);
+            callback?.Invoke(callbackLabel, "Starting Command : " + cmd);
 
             if (!dryRun)
             {
@@ -96,8 +97,7 @@ namespace Synapse.Handlers.CommandLine
                                             String procLine;
                                             while ((procLine = procStr.ReadLine()) != null)
                                             {
-                                                if (callback != null)
-                                                    callback(callbackLabel, procLine);
+                                                callback?.Invoke(callbackLabel, procLine);
                                             }
                                         }
 
@@ -119,31 +119,25 @@ namespace Synapse.Handlers.CommandLine
                         }
                         else
                         {
-                            if (callback != null)
-                            {
-                                callback(callbackLabel, "Return Value : " + exitCode);
-                                callback(callbackLabel, mbo.GetText(TextFormat.Mof));
-                            }
+                            callback?.Invoke(callbackLabel, "Return Value : " + exitCode);
+                            callback?.Invoke(callbackLabel, mbo.GetText(TextFormat.Mof));
                         }
                     }   // End Using
                 }
                 catch (Exception e)
                 {
-                    if (callback != null)
-                    {
-                        String errorMsg = e.Message;
+                    String errorMsg = e.Message;
 
-                        if (errorMsg.StartsWith("TIMEOUT"))
-                        {
-                            callback(callbackLabel, e.Message);
-                        }
-                        else
-                        {
-                            callback(callbackLabel, "Error Occured In WMIUtils.RunCommand : ");
-                            callback(callbackLabel, e.Message);
-                            callback(callbackLabel, e.StackTrace);
-                            throw e;
-                        }
+                    if (errorMsg.StartsWith("TIMEOUT"))
+                    {
+                        callback?.Invoke(callbackLabel, e.Message);
+                    }
+                    else
+                    {
+                        callback?.Invoke(callbackLabel, "Error Occured In WMIUtils.RunCommand : ");
+                        callback?.Invoke(callbackLabel, e.Message);
+                        callback?.Invoke(callbackLabel, e.StackTrace);
+                        throw e;
                     }
 
                     if (actionOnTimeout == TimeoutActionType.Error)
@@ -151,10 +145,12 @@ namespace Synapse.Handlers.CommandLine
                 }
             }
 
-            if (callback != null)
-                callback(callbackLabel, "Command Completed.  Exit Code = " + exitStatus);
+            result.Status = StatusType.Complete;
+            result.ExitData = exitStatus;
+            result.Message = "Command Completed.  Exit Code = " + exitStatus;
+            callback?.Invoke(callbackLabel, result.Message);
 
-            return exitStatus;
+            return result;
         }
 
         #endregion

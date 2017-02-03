@@ -66,7 +66,7 @@ namespace Synapse.Handlers.CommandLine
                 if (clock.ElapsedSeconds() > timeoutSeconds)
                 {
                     thread.Abort();
-                    Callback(CallbackLabel, "LogTailer Thread Did Not Stop In " + timeoutSeconds + " Seconds.  Thread Aborted.");
+                    Callback?.Invoke(CallbackLabel, "LogTailer Thread Did Not Stop In " + timeoutSeconds + " Seconds.  Thread Aborted.");
                     reader.Close();
                     reader.Dispose();
                     Thread.Sleep(PollingIntervalMills);
@@ -90,8 +90,8 @@ namespace Synapse.Handlers.CommandLine
             }
             catch (Exception e)
             {
-                Callback(CallbackLabel, e.Message);
-                Callback(CallbackLabel, "Unable To Delete File [" + FileName + "]");
+                Callback?.Invoke(CallbackLabel, e.Message);
+                Callback?.Invoke(CallbackLabel, "Unable To Delete File [" + FileName + "]");
             }
         }
 
@@ -121,8 +121,7 @@ namespace Synapse.Handlers.CommandLine
                             char ch = (char)i;
                             if (ch == '\r' || ch == '\n')
                             {
-                                if (Callback != null)
-                                    Callback(CallbackLabel, line);
+                                Callback?.Invoke(CallbackLabel, line);
 
                                 line = String.Empty;
 
@@ -161,8 +160,7 @@ namespace Synapse.Handlers.CommandLine
                 catch
                 {
                     reader = null;
-                    if (Callback != null)
-                        Callback(CallbackLabel, "Process Completed But Unable To Find Output File [" + FileName + "].");
+                    Callback?.Invoke(CallbackLabel, "Process Completed But Unable To Find Output File [" + FileName + "].");
                 }
             }
 
@@ -181,8 +179,7 @@ namespace Synapse.Handlers.CommandLine
                         char ch = (char)i;
                         if (ch == '\r' || ch == '\n')
                         {
-                            if (Callback != null)
-                                Callback(CallbackLabel, line);
+                            Callback?.Invoke(CallbackLabel, line);
 
                             line = String.Empty;
 
