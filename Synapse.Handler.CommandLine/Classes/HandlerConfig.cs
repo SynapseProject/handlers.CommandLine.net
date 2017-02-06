@@ -25,6 +25,8 @@ namespace Synapse.Handlers.CommandLine
         public long TimeoutMills { get; set; }
         [XmlElement]
         public TimeoutActionType TimeoutAction { get; set; }
+        [XmlArrayItem(ElementName = "ExitCode")]
+        public List<String> ValidExitCodes { get; set; }
 
         public override string ToString()
         {
@@ -34,6 +36,13 @@ namespace Synapse.Handlers.CommandLine
             if (!String.IsNullOrWhiteSpace(Command)) { sb.AppendLine("Command          : " + Command); }
             sb.AppendLine("TimeoutMills     : " + TimeoutMills);
             sb.AppendLine("TimeoutAction    : " + TimeoutAction);
+            if (ValidExitCodes!= null)
+            {
+                sb.Append("ValidExitCodes   : ");
+                foreach (String code in ValidExitCodes)
+                    sb.Append("[" + code + "] ");
+                sb.AppendLine("");
+            }
 
             return sb.ToString();
         }
