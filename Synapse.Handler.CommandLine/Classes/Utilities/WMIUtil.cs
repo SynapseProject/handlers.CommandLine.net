@@ -145,9 +145,8 @@ namespace Synapse.Handlers.CommandLine
                 }
             }
 
-            result.Status = StatusType.Complete;
             result.ExitData = exitStatus;
-            result.Message = "Command Completed.  Exit Code = " + exitStatus;
+            result.Message = "Exit Code = " + exitStatus;
             callback?.Invoke(callbackLabel, result.Message);
 
             return result;

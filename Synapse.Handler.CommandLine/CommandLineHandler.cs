@@ -40,6 +40,8 @@ public class CommandLineHandler : HandlerRuntimeBase
                 result = LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, SynapseLogger, null, startInfo.IsDryRun);
             else
                 result = WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, SynapseLogger, config.RunOn, startInfo.IsDryRun);
+
+            result.Status = HandlerUtils.GetStatusType(int.Parse(result.ExitData.ToString()), config.ValidExitCodes);
         }
         catch (Exception e)
         {
@@ -47,6 +49,8 @@ public class CommandLineHandler : HandlerRuntimeBase
             Console.WriteLine(e.StackTrace);
             throw e;
         }
+
+        OnLogMessage(config.RunOn, "Command " + result.Status + " with Exit Code = " + result.ExitData);
 
         return result;
     }

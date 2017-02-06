@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Enums\ArgumentParserType.cs" />
+    <Compile Include="Classes\Enums\ExitCodeOperators.cs" />
     <Compile Include="Classes\Enums\TimeoutActionType.cs" />
     <Compile Include="Classes\HandlerConfig.cs" />
     <Compile Include="Classes\HandlerParameters.cs" />

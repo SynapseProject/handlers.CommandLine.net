@@ -93,9 +93,8 @@ namespace Synapse.Handlers.CommandLine
                 exitCode = process.ExitCode;
             }
 
-            result.Status = StatusType.Complete;
             result.ExitData = exitCode;
-            result.Message = "Command Completed.  Exit Code = " + exitCode;
+            result.Message = "Exit Code = " + exitCode;
             callback?.Invoke(callbackLabel, result.Message);
 
             return result;
