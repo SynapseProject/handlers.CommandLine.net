@@ -92,6 +92,10 @@ namespace Synapse.Handlers.CommandLine
 
                 exitCode = process.ExitCode;
             }
+            else
+            {
+                callback?.Invoke(callbackLabel, "Dry Run Flag Set.  Execution Skipped");
+            }
 
             result.ExitData = exitCode;
             result.Message = "Exit Code = " + exitCode;

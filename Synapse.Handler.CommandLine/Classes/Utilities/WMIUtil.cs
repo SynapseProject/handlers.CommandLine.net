@@ -144,6 +144,10 @@ namespace Synapse.Handlers.CommandLine
                         throw e;
                 }
             }
+            else
+            {
+                callback?.Invoke(callbackLabel, "Dry Run Flag Set.  Execution Skipped");
+            }
 
             result.ExitData = exitStatus;
             result.Message = "Exit Code = " + exitStatus;
