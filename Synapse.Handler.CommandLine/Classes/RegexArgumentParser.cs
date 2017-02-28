@@ -15,13 +15,6 @@ namespace Synapse.Handlers.CommandLine
         public String ArgString { get; set; }
         [XmlArrayItem(ElementName = "Expression")]
         public List<RegexSubstitutionType> Expressions { get; set; }
-
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder();
-
-            return sb.ToString();
-        }
     }
 
     public class RegexSubstitutionType
@@ -30,6 +23,8 @@ namespace Synapse.Handlers.CommandLine
         public String Find { get; set; }
         [XmlElement]
         public String ReplaceWith { get; set; }
+        [XmlElement]
+        public EncodingType Encoding { get; set; }
     }
 
 }

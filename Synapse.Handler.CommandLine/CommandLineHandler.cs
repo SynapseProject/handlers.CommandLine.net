@@ -22,8 +22,6 @@ public class CommandLineHandler : HandlerRuntimeBase
     public override IHandlerRuntime Initialize(string configStr)
     {
         config = HandlerUtils.Deserialize<HandlerConfig>(configStr);
-        Console.WriteLine(config);
-
         return base.Initialize(configStr);
     }
 
@@ -31,7 +29,6 @@ public class CommandLineHandler : HandlerRuntimeBase
     {
         ExecuteResult result = null;
         parameters = HandlerUtils.Deserialize<HandlerParameters>(startInfo.Parameters);
-        Console.WriteLine(parameters);
 
         try
         {

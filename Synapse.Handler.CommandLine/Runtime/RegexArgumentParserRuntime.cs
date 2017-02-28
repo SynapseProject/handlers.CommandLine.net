@@ -15,8 +15,15 @@ namespace Synapse.Handlers.CommandLine
 
             foreach (RegexSubstitutionType replacement in this.Expressions)
             {
+                String replaceWith = replacement.ReplaceWith;
+                if (replacement.Encoding == EncodingType.Base64)
+                {
+                    var bytes = Encoding.UTF8.GetBytes(replaceWith);
+                    replaceWith = Convert.ToBase64String(bytes);
+                }
+
                 Regex regex = new Regex(replacement.Find);
-                args = regex.Replace(args, replacement.ReplaceWith);
+                args = regex.Replace(args, replaceWith);
             }
 
             return args;
