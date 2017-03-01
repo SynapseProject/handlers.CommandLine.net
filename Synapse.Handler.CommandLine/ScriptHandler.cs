@@ -4,29 +4,42 @@ using System.Xml;
 using Synapse.Core;
 using Synapse.Handlers.CommandLine;
 
-public class CommandLineHandler : HandlerRuntimeBase
+public class ScriptHandler : HandlerRuntimeBase
 {
-    HandlerConfig config = null;
-    HandlerParameters parameters = null;
+    ScriptHandlerConfig config = null;
+    String parameters = null;
 
     public override IHandlerRuntime Initialize(string configStr)
     {
-        config = HandlerUtils.Deserialize<HandlerConfig>(configStr);
+        config = HandlerUtils.Deserialize<ScriptHandlerConfig>(configStr);
         return base.Initialize(configStr);
     }
 
     override public ExecuteResult Execute(HandlerStartInfo startInfo)
     {
         ExecuteResult result = null;
-        parameters = HandlerUtils.Deserialize<HandlerParameters>(startInfo.Parameters);
+        parameters = startInfo.Parameters;
 
         try
         {
-            String args = ProcessArguments(parameters);
+            Console.WriteLine(parameters);
+
+            String command = "@cmd.exe";
+            String args = null;
+            switch (config.Type)
+            {
+                case ScriptType.Powershell:
+                    command = "powershell.exe";
+                    args = config.Args + @" Invoke-Command -ScriptBlock {" + parameters + "}";
+                    if (!String.IsNullOrWhiteSpace(config.ScriptArgs))
+                        args += " -ArgumentList " + config.ScriptArgs;
+                    break;
+            }
+
             if (String.IsNullOrEmpty(config.RunOn))
-                result = LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, SynapseLogger, null, startInfo.IsDryRun);
+                result = LocalProcess.RunCommand(command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, SynapseLogger, null, startInfo.IsDryRun);
             else
-                result = WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, SynapseLogger, config.RunOn, startInfo.IsDryRun);
+                result = WMIUtil.RunCommand(command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, SynapseLogger, config.RunOn, startInfo.IsDryRun);
 
             result.Status = HandlerUtils.GetStatusType(int.Parse(result.ExitData.ToString()), config.ValidExitCodes);
         }
