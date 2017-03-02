@@ -111,7 +111,7 @@ namespace Synapse.Handlers.CommandLine
                             String sts = null;
 
                             // Expected Format : "Operator Value1 [Value2] [Status]"
-                            MatchCollection matches = Regex.Matches(validExitCode, @"^\W*(\w*)\W*(\d*)\W*(\d*)\W*(\w*).*$", RegexOptions.IgnoreCase);
+                            MatchCollection matches = Regex.Matches(validExitCode, @"^\s*(\S*)\s*(-?\d*)\s*(-?\d*)\s*(\S*).*$", RegexOptions.IgnoreCase);
 
                             op = matches[0].Groups[1].Value;
                             v1 = int.Parse(matches[0].Groups[2].Value);
