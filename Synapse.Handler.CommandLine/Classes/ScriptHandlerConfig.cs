@@ -26,6 +26,8 @@ namespace Synapse.Handlers.CommandLine
         [XmlElement]
         public String ScriptArgs { get; set; }
         [XmlElement]
+        public ParameterTypeType ParameterType { get; set; }
+        [XmlElement]
         public long TimeoutMills { get; set; }
         [XmlElement]
         public TimeoutActionType TimeoutAction { get; set; }
