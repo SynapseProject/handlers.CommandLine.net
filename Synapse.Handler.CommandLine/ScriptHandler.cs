@@ -22,8 +22,6 @@ public class ScriptHandler : HandlerRuntimeBase
 
         try
         {
-            Console.WriteLine(parameters);
-
             String command = "@cmd.exe";
             String args = null;
             switch (config.Type)
