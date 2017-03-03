@@ -68,7 +68,7 @@
     <Compile Include="Classes\Utilities\LogTailer.cs" />
     <Compile Include="Classes\Utilities\WMIUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CommandLineHandler.cs" />
+    <Compile Include="CommandHandler.cs" />
     <Compile Include="Runtime\RegexArgumentParserRuntime.cs" />
     <Compile Include="ScriptHandler.cs" />
   </ItemGroup>

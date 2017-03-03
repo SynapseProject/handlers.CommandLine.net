@@ -4,7 +4,7 @@ using System.Xml;
 using Synapse.Core;
 using Synapse.Handlers.CommandLine;
 
-public class CommandLineHandler : HandlerRuntimeBase
+public class CommandHandler : HandlerRuntimeBase
 {
     HandlerConfig config = null;
     HandlerParameters parameters = null;
