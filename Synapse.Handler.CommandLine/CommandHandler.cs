@@ -18,7 +18,8 @@ public class CommandHandler : HandlerRuntimeBase
     override public ExecuteResult Execute(HandlerStartInfo startInfo)
     {
         ExecuteResult result = null;
-        parameters = HandlerUtils.Deserialize<HandlerParameters>(startInfo.Parameters);
+        if (startInfo.Parameters != null)
+            parameters = HandlerUtils.Deserialize<HandlerParameters>(startInfo.Parameters);
 
         try
         {
@@ -46,21 +47,27 @@ public class CommandHandler : HandlerRuntimeBase
     {
         String args = String.Empty;
 
-        if (parms.Parser == ArgumentParserType.None)
+        if (parms != null)
         {
-            if (parms.Arguments.GetType() == typeof(System.Xml.XmlNode[]))
+            if (parms.Parser == ArgumentParserType.None)
             {
-                XmlNode[] nodes = (System.Xml.XmlNode[])(parms.Arguments);
-                args = nodes[0].InnerText;
+                if (parms.Arguments?.GetType() == typeof(System.Xml.XmlNode[]))
+                {
+                    XmlNode[] nodes = (System.Xml.XmlNode[])(parms.Arguments);
+                    args = nodes[0].InnerText;
+                }
+                else
+                    args = parms.Arguments?.ToString();
             }
-            else
-                args = parms.Arguments.ToString();
-        }
-        else if (parms.Parser == ArgumentParserType.Regex)
-        {
-            args = HandlerUtils.Serialize<RegexArgumentParser>(parms.Arguments);
-            RegexArgumentParser parser = HandlerUtils.Deserialize<RegexArgumentParser>(args);
-            args = parser.Parse();
+            else if (parms.Parser == ArgumentParserType.Regex)
+            {
+                if (parms.Arguments != null)
+                {
+                    args = HandlerUtils.Serialize<RegexArgumentParser>(parms.Arguments);
+                    RegexArgumentParser parser = HandlerUtils.Deserialize<RegexArgumentParser>(args);
+                    args = parser.Parse();
+                }
+            }
         }
 
         return args;
