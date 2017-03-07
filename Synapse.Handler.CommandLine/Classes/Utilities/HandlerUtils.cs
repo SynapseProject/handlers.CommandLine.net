@@ -129,6 +129,7 @@ namespace Synapse.Handlers.CommandLine
                                     case "EQ":
                                     case "EQU":
                                     case "EQUALTO":
+                                    case "":
                                         validComparisionFound = true;
                                         if (exitCode == v1)
                                             returnStatus = status;
@@ -172,14 +173,18 @@ namespace Synapse.Handlers.CommandLine
                                     case "BTW":
                                     case "BETWEEN":
                                         validComparisionFound = true;
-                                        if (v1 <= exitCode && exitCode <= v2)
+                                        int bv1 = Math.Min(v1, v2);
+                                        int bv2 = Math.Max(v1, v2);
+                                        if (bv1 <= exitCode && exitCode <= bv2)
                                             returnStatus = status;
                                         break;
                                     case "NB":
                                     case "NBT":
                                     case "NOTBETWEEN":
                                         validComparisionFound = true;
-                                        if (v1 > exitCode || v2 < exitCode)
+                                        int nbv1 = Math.Min(v1, v2);
+                                        int nbv2 = Math.Max(v1, v2);
+                                        if (nbv1 > exitCode || nbv2 < exitCode)
                                             returnStatus = status;
                                         break;
                                     default:

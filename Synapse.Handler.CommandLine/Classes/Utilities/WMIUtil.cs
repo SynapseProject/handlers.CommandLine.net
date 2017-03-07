@@ -140,7 +140,7 @@ namespace Synapse.Handlers.CommandLine
                         throw e;
                     }
 
-                    if (actionOnTimeout == TimeoutActionType.Error)
+                    if (actionOnTimeout == TimeoutActionType.Error || actionOnTimeout == TimeoutActionType.KillProcessAndError)
                         throw e;
                 }
             }
