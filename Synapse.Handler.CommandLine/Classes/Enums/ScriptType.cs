@@ -9,6 +9,7 @@ namespace Synapse.Handlers.CommandLine
     public enum ScriptType
     {
         None,
-        Powershell
+        Powershell,
+        Batch
     }
 }

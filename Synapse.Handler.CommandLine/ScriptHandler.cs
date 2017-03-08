@@ -31,20 +31,21 @@ public class ScriptHandler : HandlerRuntimeBase
             {
                 case ScriptType.Powershell:
                     command = "powershell.exe";
-                    if (config.ParameterType == ParameterTypeType.Script)
-                    {
-                        script = FileUtils.GetTempFileUNC(config.RunOn, config.WorkingDirectory, "ps1");
-                        if (script == null)
-                            script = FileUtils.GetTempFileUNC(config.RunOn, Path.GetTempPath(), "ps1");
-                        File.WriteAllText(script, parameters);
-                    }
-                    else
-                        script = parameters;
-
+                    script = GetScript(config, "ps1");
                     args = config.Args + @" -File """ + script + @"""";
                     if (!String.IsNullOrWhiteSpace(config.ScriptArgs))
                         args += " " + config.ScriptArgs;
                     break;
+
+                case ScriptType.Batch:
+                    command = "cmd.exe";
+                    script = GetScript(config, "bat");
+                    args = config.Args + " " + script;
+                    if (!String.IsNullOrWhiteSpace(config.ScriptArgs))
+                        args += " " + config.ScriptArgs;
+
+                    break;
+
                 default:
                     throw new Exception("Unknown ScriptType [" + config.Type.ToString() + "] Received.");
             }
@@ -70,6 +71,22 @@ public class ScriptHandler : HandlerRuntimeBase
 
         OnLogMessage(config.RunOn, "Command " + result.Status + " with Exit Code = " + result.ExitData);
         return result;
+    }
+
+    public string GetScript(ScriptHandlerConfig config, String extension)
+    {
+        String script = null;
+        if (config.ParameterType == ParameterTypeType.Script)
+        {
+            script = FileUtils.GetTempFileUNC(config.RunOn, config.WorkingDirectory, extension);
+            if (script == null)
+                script = FileUtils.GetTempFileUNC(config.RunOn, Path.GetTempPath(), extension);
+            File.WriteAllText(script, parameters);
+        }
+        else
+            script = parameters;
+
+        return script;
     }
 
     public void SynapseLogger(String label, String message)
