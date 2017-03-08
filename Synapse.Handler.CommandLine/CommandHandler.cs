@@ -25,11 +25,12 @@ public class CommandHandler : HandlerRuntimeBase
         {
             String args = ProcessArguments(parameters);
             if (String.IsNullOrEmpty(config.RunOn))
-                result = LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, SynapseLogger, null, startInfo.IsDryRun);
+                result = LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, SynapseLogger, null, startInfo.IsDryRun);
             else
-                result = WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutAction, SynapseLogger, config.RunOn, startInfo.IsDryRun);
+                result = WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, config.KillRemoteProcessOnTimeout, SynapseLogger, config.RunOn, startInfo.IsDryRun);
 
-            result.Status = HandlerUtils.GetStatusType(int.Parse(result.ExitData.ToString()), config.ValidExitCodes);
+            if (result.Status == StatusType.None)
+                result.Status = HandlerUtils.GetStatusType(int.Parse(result.ExitData.ToString()), config.ValidExitCodes);
         }
         catch (Exception e)
         {

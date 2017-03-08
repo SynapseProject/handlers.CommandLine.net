@@ -7,6 +7,8 @@ using System.IO;
 using System.Xml.Serialization;
 using System.Xml;
 
+using Synapse.Core;
+
 using YamlDotNet.Serialization;
 
 using Synapse.Core.Utilities;
@@ -24,7 +26,9 @@ namespace Synapse.Handlers.CommandLine
         [XmlElement]
         public long TimeoutMills { get; set; }
         [XmlElement]
-        public TimeoutActionType TimeoutAction { get; set; }
+        public StatusType TimeoutStatus { get; set; }
+        [XmlElement]
+        public bool KillRemoteProcessOnTimeout { get; set; }
         [XmlArrayItem(ElementName = "ExitCode")]
         public List<String> ValidExitCodes { get; set; }
 
@@ -35,7 +39,8 @@ namespace Synapse.Handlers.CommandLine
             if (!String.IsNullOrWhiteSpace(WorkingDirectory)) { sb.AppendLine("WorkingDirectory : " + WorkingDirectory); }
             if (!String.IsNullOrWhiteSpace(Command)) { sb.AppendLine("Command          : " + Command); }
             sb.AppendLine("TimeoutMills     : " + TimeoutMills);
-            sb.AppendLine("TimeoutAction    : " + TimeoutAction);
+            sb.AppendLine("TimeoutStatus    : " + TimeoutStatus);
+            sb.AppendLine("KillOnTimeout    : " + KillRemoteProcessOnTimeout);
             if (ValidExitCodes!= null)
             {
                 sb.Append("ValidExitCodes   : ");
