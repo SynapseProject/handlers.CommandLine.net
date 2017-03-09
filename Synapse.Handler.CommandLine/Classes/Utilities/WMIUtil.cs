@@ -82,7 +82,7 @@ namespace Synapse.Handlers.CommandLine
                                 {
                                     StringBuilder rc = new StringBuilder();
                                     String processName = @"cmd.exe";
-                                    String timeoutMessage = "TIMEOUT : Process [" + processName + "] With Id [" + processId + "] Failed To Stop In [" + timeoutMills + "] Milliseconds.";
+                                    String timeoutMessage = "TIMEOUT : Process [" + processName + "] With Id [" + processId + "] Failed To Complete In [" + timeoutMills + "] Milliseconds.";
                                     if (killProcessOnTimeout)
                                     {
                                         String queryStr = String.Format("SELECT * FROM Win32_Process Where Name = '{0}' AND ProcessId = '{1}'", processName, processId);
@@ -101,7 +101,7 @@ namespace Synapse.Handlers.CommandLine
                                             }
                                         }
 
-                                        timeoutMessage = "TIMEOUT : Process [" + processName + "] With Id [" + processId + "] Failed To Stop In [" + timeoutMills + "] Milliseconds And Was Remotely Termintated.";
+                                        timeoutMessage = "TIMEOUT : Process [" + processName + "] With Id [" + processId + "] Failed To Complete In [" + timeoutMills + "] Milliseconds And Was Remotely Termintated.";
                                     }
                                     tailer.Stop(60, true);
 

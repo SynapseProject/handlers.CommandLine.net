@@ -39,7 +39,7 @@ public class CommandHandler : HandlerRuntimeBase
             throw e;
         }
 
-        OnLogMessage(config.RunOn, "Command " + result.Status + " with Exit Code = " + result.ExitData);
+        OnLogMessage(config.RunOn, "Command finished with exit code = " + result.ExitData + ".  Returning status [" + result.Status + "].");
 
         return result;
     }

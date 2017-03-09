@@ -73,7 +73,7 @@ namespace Synapse.Handlers.CommandLine
                 if (timeoutReached)
                 {
                     result.Status = timeoutStatus;
-                    String timeoutMessage = "TIMEOUT : Process [" + process.ProcessName + "] With Id [" + process.Id + "] Failed To Stop In [" + timeoutMills + "] Milliseconds And Was Remotely Termintated.";
+                    String timeoutMessage = "TIMEOUT : Process [" + process.ProcessName + "] With Id [" + process.Id + "] Failed To Complete In [" + timeoutMills + "] Milliseconds And Was Termintated.";
 
                     if (!process.HasExited)
                     {
@@ -82,7 +82,7 @@ namespace Synapse.Handlers.CommandLine
                     }
                     else
                     {
-                        timeoutMessage = "TIMEOUT : Process [" + process.ProcessName + "] With Id [" + process.Id + "] Failed To Stop In [" + timeoutMills + "] Milliseconds But May Have Completed.";
+                        timeoutMessage = "TIMEOUT : Process [" + process.ProcessName + "] With Id [" + process.Id + "] Failed To Complete In [" + timeoutMills + "] Milliseconds But May Have Completed.";
                         callback?.Invoke(callbackLabel, timeoutMessage);
                     }
 
