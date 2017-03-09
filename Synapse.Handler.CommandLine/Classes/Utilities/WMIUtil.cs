@@ -16,7 +16,7 @@ namespace Synapse.Handlers.CommandLine
     {
         #region Public Methods - RunCommand
 
-        public static ExecuteResult RunCommand(String command, String args, String server, String remoteWorkingDirectory, long timeoutMills, TimeoutActionType actionOnTimeout, Action<string, string> callback = null, string callbackLabel = null, bool dryRun = false)
+        public static ExecuteResult RunCommand(String command, String args, String server, String remoteWorkingDirectory, long timeoutMills, StatusType timeoutStatus = StatusType.Failed, bool killProcessOnTimeout = true, Action<string, string> callback = null, string callbackLabel = null, bool dryRun = false)
         {
             ExecuteResult result = new ExecuteResult();
             if (callback == null)
@@ -82,8 +82,8 @@ namespace Synapse.Handlers.CommandLine
                                 {
                                     StringBuilder rc = new StringBuilder();
                                     String processName = @"cmd.exe";
-                                    String timeoutMessage = "TIMEOUT : Process [" + processName + "] With Id [" + processId + "] Failed To Stop In [" + timeoutMills + "] Milliseconds.";
-                                    if (actionOnTimeout == TimeoutActionType.KillProcessAndContinue || actionOnTimeout == TimeoutActionType.KillProcessAndError)
+                                    String timeoutMessage = "TIMEOUT : Process [" + processName + "] With Id [" + processId + "] Failed To Complete In [" + timeoutMills + "] Milliseconds.";
+                                    if (killProcessOnTimeout)
                                     {
                                         String queryStr = String.Format("SELECT * FROM Win32_Process Where Name = '{0}' AND ProcessId = '{1}'", processName, processId);
                                         ObjectQuery Query = new ObjectQuery(queryStr);
@@ -101,7 +101,7 @@ namespace Synapse.Handlers.CommandLine
                                             }
                                         }
 
-                                        timeoutMessage = "TIMEOUT : Process [" + processName + "] With Id [" + processId + "] Failed To Stop In [" + timeoutMills + "] Milliseconds And Was Remotely Termintated.";
+                                        timeoutMessage = "TIMEOUT : Process [" + processName + "] With Id [" + processId + "] Failed To Complete In [" + timeoutMills + "] Milliseconds And Was Remotely Termintated.";
                                     }
                                     tailer.Stop(60, true);
 
@@ -131,6 +131,8 @@ namespace Synapse.Handlers.CommandLine
                     if (errorMsg.StartsWith("TIMEOUT"))
                     {
                         callback?.Invoke(callbackLabel, e.Message);
+                        result.Status = timeoutStatus;
+                        callback?.Invoke(callbackLabel, "TIMEOUT : Returning Timeout Stauts [" + result.Status + "].");
                     }
                     else
                     {
@@ -139,9 +141,6 @@ namespace Synapse.Handlers.CommandLine
                         callback?.Invoke(callbackLabel, e.StackTrace);
                         throw e;
                     }
-
-                    if (actionOnTimeout == TimeoutActionType.Error || actionOnTimeout == TimeoutActionType.KillProcessAndError)
-                        throw e;
                 }
             }
             else

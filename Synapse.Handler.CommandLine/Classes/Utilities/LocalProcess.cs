@@ -12,7 +12,7 @@ namespace Synapse.Handlers.CommandLine
 {
     class LocalProcess
     {
-        public static ExecuteResult RunCommand(String command, String args, String remoteWorkingDirectory, long timeoutMills = 0, TimeoutActionType actionOnTimeout = TimeoutActionType.Error, Action<string, string> callback = null, String callbackLabel = null, bool dryRun = false)
+        public static ExecuteResult RunCommand(String command, String args, String remoteWorkingDirectory, long timeoutMills = 0, StatusType timeoutStatus = StatusType.Failed, Action<string, string> callback = null, String callbackLabel = null, bool dryRun = false)
         {
             ExecuteResult result = new ExecuteResult();
             int exitCode = 0;
@@ -72,7 +72,8 @@ namespace Synapse.Handlers.CommandLine
 
                 if (timeoutReached)
                 {
-                    String timeoutMessage = "TIMEOUT : Process [" + process.ProcessName + "] With Id [" + process.Id + "] Failed To Stop In [" + timeoutMills + "] Milliseconds And Was Remotely Termintated.";
+                    result.Status = timeoutStatus;
+                    String timeoutMessage = "TIMEOUT : Process [" + process.ProcessName + "] With Id [" + process.Id + "] Failed To Complete In [" + timeoutMills + "] Milliseconds And Was Termintated.";
 
                     if (!process.HasExited)
                     {
@@ -81,13 +82,11 @@ namespace Synapse.Handlers.CommandLine
                     }
                     else
                     {
-                        timeoutMessage = "TIMEOUT : Process [" + process.ProcessName + "] With Id [" + process.Id + "] Failed To Stop In [" + timeoutMills + "] Milliseconds But May Have Completed.";
+                        timeoutMessage = "TIMEOUT : Process [" + process.ProcessName + "] With Id [" + process.Id + "] Failed To Complete In [" + timeoutMills + "] Milliseconds But May Have Completed.";
                         callback?.Invoke(callbackLabel, timeoutMessage);
                     }
-                    if (actionOnTimeout == TimeoutActionType.Error || actionOnTimeout == TimeoutActionType.KillProcessAndError)
-                    {
-                        throw new Exception(timeoutMessage);
-                    }
+
+                    callback?.Invoke(callbackLabel, "TIMEOUT : Returning Timeout Stauts [" + result.Status + "].");
                 }
 
                 exitCode = process.ExitCode;
