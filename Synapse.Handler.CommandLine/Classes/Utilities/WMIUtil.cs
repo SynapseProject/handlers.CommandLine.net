@@ -104,18 +104,20 @@ namespace Synapse.Handlers.CommandLine
                                         timeoutMessage = "TIMEOUT : Process [" + processName + "] With Id [" + processId + "] Failed To Complete In [" + timeoutMills + "] Milliseconds And Was Remotely Termintated.";
                                     }
                                     tailer.Stop(60, true);
+                                    result.ExitData = tailer.Contents;
 
                                     throw new Exception(timeoutMessage);
                                 }
                                 else
                                 {
                                     tailer.Stop(60, true);
+                                    result.ExitData = tailer.Contents;
                                     throw ex;
                                 }
                             }
 
                             tailer.Stop(300, true);
-
+                            result.ExitData = tailer.Contents;
                         }
                         else
                         {
@@ -148,7 +150,7 @@ namespace Synapse.Handlers.CommandLine
                 callback?.Invoke(callbackLabel, "Dry Run Flag Set.  Execution Skipped");
             }
 
-            result.ExitData = exitStatus;
+            result.ExitCode = exitStatus;
             result.Message = "Exit Code = " + exitStatus;
             callback?.Invoke(callbackLabel, result.Message);
 

@@ -56,7 +56,7 @@ public class ScriptHandler : HandlerRuntimeBase
                 result = WMIUtil.RunCommand(command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, config.KillRemoteProcessOnTimeout, SynapseLogger, config.RunOn, startInfo.IsDryRun);
 
             if (result.Status == StatusType.None)
-                result.Status = HandlerUtils.GetStatusType(int.Parse(result.ExitData.ToString()), config.ValidExitCodes);
+                result.Status = HandlerUtils.GetStatusType(result.ExitCode, config.ValidExitCodes);
 
             if (File.Exists(script) && config.ParameterType == ParameterTypeType.Script)
                 File.Delete(script);
@@ -70,7 +70,7 @@ public class ScriptHandler : HandlerRuntimeBase
             throw e;
         }
 
-        OnLogMessage(config.RunOn, "Command finished with exit code = " + result.ExitData + ".  Returning status [" + result.Status + "].");
+        OnLogMessage(config.RunOn, "Command finished with exit code = " + result.ExitCode + ".  Returning status [" + result.Status + "].");
         return result;
     }
 

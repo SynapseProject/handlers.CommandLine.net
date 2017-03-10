@@ -30,7 +30,7 @@ public class CommandHandler : HandlerRuntimeBase
                 result = WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, config.KillRemoteProcessOnTimeout, SynapseLogger, config.RunOn, startInfo.IsDryRun);
 
             if (result.Status == StatusType.None)
-                result.Status = HandlerUtils.GetStatusType(int.Parse(result.ExitData.ToString()), config.ValidExitCodes);
+                result.Status = HandlerUtils.GetStatusType(result.ExitCode, config.ValidExitCodes);
         }
         catch (Exception e)
         {
@@ -39,7 +39,7 @@ public class CommandHandler : HandlerRuntimeBase
             throw e;
         }
 
-        OnLogMessage(config.RunOn, "Command finished with exit code = " + result.ExitData + ".  Returning status [" + result.Status + "].");
+        OnLogMessage(config.RunOn, "Command finished with exit code = " + result.ExitCode + ".  Returning status [" + result.Status + "].");
 
         return result;
     }

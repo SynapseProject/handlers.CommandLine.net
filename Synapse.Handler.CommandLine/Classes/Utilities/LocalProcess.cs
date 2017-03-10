@@ -14,6 +14,7 @@ namespace Synapse.Handlers.CommandLine
     {
         public static ExecuteResult RunCommand(String command, String args, String remoteWorkingDirectory, long timeoutMills = 0, StatusType timeoutStatus = StatusType.Failed, Action<string, string> callback = null, String callbackLabel = null, bool dryRun = false)
         {
+            StringBuilder stdout = new StringBuilder();
             ExecuteResult result = new ExecuteResult();
             int exitCode = 0;
             if (callback == null)
@@ -40,6 +41,7 @@ namespace Synapse.Handlers.CommandLine
                     while (!process.StandardOutput.EndOfStream)
                     {
                         String line = process.StandardOutput.ReadLine();
+                        stdout.AppendLine(line);
                         callback?.Invoke(callbackLabel, line);
                     }
                 });
@@ -50,6 +52,7 @@ namespace Synapse.Handlers.CommandLine
                     while (!process.StandardError.EndOfStream)
                     {
                         String line = process.StandardError.ReadLine();
+                        stdout.AppendLine(line);
                         callback?.Invoke(callbackLabel, line);
                     }
                 });
@@ -96,7 +99,8 @@ namespace Synapse.Handlers.CommandLine
                 callback?.Invoke(callbackLabel, "Dry Run Flag Set.  Execution Skipped");
             }
 
-            result.ExitData = exitCode;
+            result.ExitCode = exitCode;
+            result.ExitData = stdout.ToString();
             result.Message = "Exit Code = " + exitCode;
             callback?.Invoke(callbackLabel, result.Message);
 

@@ -15,10 +15,12 @@ namespace Synapse.Handlers.CommandLine
         public Action<string, string> Callback { get; set; }
         public String CallbackLabel { get; set; }
         public int PollingIntervalMills { get; set; }
+        public String Contents { get { return stdout.ToString(); } }
 
         bool stop = false;
         Thread thread = null;
         StreamReader reader = null;
+        StringBuilder stdout = new StringBuilder();
 
         public LogTailer() { PollingIntervalMills = 1000; }
 
@@ -121,6 +123,7 @@ namespace Synapse.Handlers.CommandLine
                             char ch = (char)i;
                             if (ch == '\r' || ch == '\n')
                             {
+                                stdout.AppendLine(line);
                                 Callback?.Invoke(CallbackLabel, line);
 
                                 line = String.Empty;
@@ -179,6 +182,7 @@ namespace Synapse.Handlers.CommandLine
                         char ch = (char)i;
                         if (ch == '\r' || ch == '\n')
                         {
+                            stdout.AppendLine(line);
                             Callback?.Invoke(CallbackLabel, line);
 
                             line = String.Empty;
