@@ -41,7 +41,10 @@ namespace Synapse.Handlers.CommandLine
                     while (!process.StandardOutput.EndOfStream)
                     {
                         String line = process.StandardOutput.ReadLine();
-                        stdout.AppendLine(line);
+                        lock (stdout)
+                        {
+                            stdout.AppendLine(line);
+                        }
                         callback?.Invoke(callbackLabel, line);
                     }
                 });
@@ -52,7 +55,10 @@ namespace Synapse.Handlers.CommandLine
                     while (!process.StandardError.EndOfStream)
                     {
                         String line = process.StandardError.ReadLine();
-                        stdout.AppendLine(line);
+                        lock (stdout)
+                        {
+                            stdout.AppendLine(line);
+                        }
                         callback?.Invoke(callbackLabel, line);
                     }
                 });
