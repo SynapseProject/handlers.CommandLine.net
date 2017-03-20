@@ -26,13 +26,15 @@ public class ScriptHandler : HandlerRuntimeBase
         {
             String command = null;
             String args = null;
+            String commandArgs = null;
 
             switch (config.Type)
             {
                 case ScriptType.Powershell:
                     command = "powershell.exe";
                     script = GetScript(config, "ps1");
-                    args = config.Args + @" -File """ + script + @"""";
+                    commandArgs = RegexArgumentParser.Parse(config.Args, config.Expressions);
+                    args = commandArgs + @" -File """ + script + @"""";
                     if (!String.IsNullOrWhiteSpace(config.ScriptArgs))
                     {
                         String scriptArgs = RegexArgumentParser.Parse(config.ScriptArgs, config.Expressions);
@@ -43,7 +45,8 @@ public class ScriptHandler : HandlerRuntimeBase
                 case ScriptType.Batch:
                     command = "cmd.exe";
                     script = GetScript(config, "bat");
-                    args = config.Args + " " + script;
+                    commandArgs = RegexArgumentParser.Parse(config.Args, config.Expressions);
+                    args = commandArgs + " " + script;
                     if (!String.IsNullOrWhiteSpace(config.ScriptArgs))
                     {
                         String scriptArgs = RegexArgumentParser.Parse(config.ScriptArgs, config.Expressions);
