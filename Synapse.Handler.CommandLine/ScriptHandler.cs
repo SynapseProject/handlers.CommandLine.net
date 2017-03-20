@@ -34,7 +34,10 @@ public class ScriptHandler : HandlerRuntimeBase
                     script = GetScript(config, "ps1");
                     args = config.Args + @" -File """ + script + @"""";
                     if (!String.IsNullOrWhiteSpace(config.ScriptArgs))
-                        args += " " + config.ScriptArgs;
+                    {
+                        String scriptArgs = RegexArgumentParser.Parse(config.ScriptArgs, config.Expressions);
+                        args += " " + scriptArgs;
+                    }
                     break;
 
                 case ScriptType.Batch:
@@ -42,7 +45,10 @@ public class ScriptHandler : HandlerRuntimeBase
                     script = GetScript(config, "bat");
                     args = config.Args + " " + script;
                     if (!String.IsNullOrWhiteSpace(config.ScriptArgs))
-                        args += " " + config.ScriptArgs;
+                    {
+                        String scriptArgs = RegexArgumentParser.Parse(config.ScriptArgs, config.Expressions);
+                        args += " " + scriptArgs;
+                    }
 
                     break;
 

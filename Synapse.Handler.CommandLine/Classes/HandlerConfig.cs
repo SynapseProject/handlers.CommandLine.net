@@ -32,26 +32,6 @@ namespace Synapse.Handlers.CommandLine
         [XmlArrayItem(ElementName = "ExitCode")]
         public List<String> ValidExitCodes { get; set; }
 
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder();
-            if (!String.IsNullOrWhiteSpace(RunOn)) { sb.AppendLine("RunOn            : " + RunOn); }
-            if (!String.IsNullOrWhiteSpace(WorkingDirectory)) { sb.AppendLine("WorkingDirectory : " + WorkingDirectory); }
-            if (!String.IsNullOrWhiteSpace(Command)) { sb.AppendLine("Command          : " + Command); }
-            sb.AppendLine("TimeoutMills     : " + TimeoutMills);
-            sb.AppendLine("TimeoutStatus    : " + TimeoutStatus);
-            sb.AppendLine("KillOnTimeout    : " + KillRemoteProcessOnTimeout);
-            if (ValidExitCodes!= null)
-            {
-                sb.Append("ValidExitCodes   : ");
-                foreach (String code in ValidExitCodes)
-                    sb.Append("[" + code + "] ");
-                sb.AppendLine("");
-            }
-
-            return sb.ToString();
-        }
-
     }
 
 }

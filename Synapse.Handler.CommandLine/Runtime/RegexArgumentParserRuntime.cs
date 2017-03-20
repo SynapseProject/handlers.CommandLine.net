@@ -11,9 +11,14 @@ namespace Synapse.Handlers.CommandLine
     {
         public String Parse()
         {
-            String args = this.ArgString;
+            return Parse(this.ArgString, this.Expressions);
+        }
 
-            foreach (RegexSubstitutionType replacement in this.Expressions)
+        public static String Parse(String argumentString, List<RegexSubstitutionType> expressions)
+        {
+            String args = argumentString;
+
+            foreach (RegexSubstitutionType replacement in expressions)
             {
                 String replaceWith = replacement.ReplaceWith;
                 if (replacement.Encoding == EncodingType.Base64)

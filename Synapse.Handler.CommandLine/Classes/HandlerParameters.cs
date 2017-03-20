@@ -19,13 +19,5 @@ namespace Synapse.Handlers.CommandLine
         public ArgumentParserType Parser { get; set; }
         [XmlElement]
         public Object Arguments { get; set; }
-
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Arguments : " + Arguments);
-            sb.AppendLine("Parser    : " + Parser);
-            return sb.ToString();
-        }
     }
 }
