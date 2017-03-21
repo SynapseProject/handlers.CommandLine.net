@@ -6,12 +6,12 @@ using Synapse.Handlers.CommandLine;
 
 public class CommandHandler : HandlerRuntimeBase
 {
-    HandlerConfig config = null;
-    HandlerParameters parameters = null;
+    CommandHandlerConfig config = null;
+    CommandHandlerParameters parameters = null;
 
     public override IHandlerRuntime Initialize(string configStr)
     {
-        config = HandlerUtils.Deserialize<HandlerConfig>(configStr);
+        config = HandlerUtils.Deserialize<CommandHandlerConfig>(configStr);
         return base.Initialize(configStr);
     }
 
@@ -19,11 +19,11 @@ public class CommandHandler : HandlerRuntimeBase
     {
         ExecuteResult result = null;
         if (startInfo.Parameters != null)
-            parameters = HandlerUtils.Deserialize<HandlerParameters>(startInfo.Parameters);
+            parameters = HandlerUtils.Deserialize<CommandHandlerParameters>(startInfo.Parameters);
 
         try
         {
-            String args = ProcessArguments(parameters);
+            String args = RegexArguments.Parse(parameters.Arguments, parameters.Expressions);
             if (String.IsNullOrEmpty(config.RunOn))
                 result = LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, SynapseLogger, null, startInfo.IsDryRun);
             else
@@ -42,36 +42,6 @@ public class CommandHandler : HandlerRuntimeBase
         OnLogMessage(config.RunOn, "Command finished with exit code = " + result.ExitCode + ".  Returning status [" + result.Status + "].");
 
         return result;
-    }
-
-    private String ProcessArguments(HandlerParameters parms)
-    {
-        String args = String.Empty;
-
-        if (parms != null)
-        {
-            if (parms.Parser == ArgumentParserType.None)
-            {
-                if (parms.Arguments?.GetType() == typeof(System.Xml.XmlNode[]))
-                {
-                    XmlNode[] nodes = (System.Xml.XmlNode[])(parms.Arguments);
-                    args = nodes[0].InnerText;
-                }
-                else
-                    args = parms.Arguments?.ToString();
-            }
-            else if (parms.Parser == ArgumentParserType.Regex)
-            {
-                if (parms.Arguments != null)
-                {
-                    args = HandlerUtils.Serialize<RegexArgumentParser>(parms.Arguments);
-                    RegexArgumentParser parser = HandlerUtils.Deserialize<RegexArgumentParser>(args);
-                    args = parser.Parse();
-                }
-            }
-        }
-
-        return args;
     }
 
     public void SynapseLogger(String label, String message)

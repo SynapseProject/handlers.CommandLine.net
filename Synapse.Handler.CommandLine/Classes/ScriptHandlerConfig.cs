@@ -15,7 +15,7 @@ using Synapse.Core.Utilities;
 
 namespace Synapse.Handlers.CommandLine
 {
-    public partial class ScriptHandlerConfig
+    public class ScriptHandlerConfig
     {
         [XmlElement]
         public String RunOn { get; set; }
@@ -24,13 +24,7 @@ namespace Synapse.Handlers.CommandLine
         [XmlElement]
         public ScriptType Type { get; set; }
         [XmlElement]
-        public String Args { get; set; }
-        [XmlElement]
-        public String ScriptArgs { get; set; }
-        [XmlArrayItem(ElementName = "Expression")]
-        public List<RegexSubstitutionType> Expressions { get; set; }
-        [XmlElement]
-        public ParameterTypeType ParameterType { get; set; }
+        public String Arguments { get; set; }
         [XmlElement]
         public long TimeoutMills { get; set; }
         [XmlElement]

@@ -52,13 +52,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\ScriptHandlerParameters.cs" />
     <Compile Include="Classes\Enums\ArgumentParserType.cs" />
     <Compile Include="Classes\Enums\EncodingType.cs" />
     <Compile Include="Classes\Enums\ParameterType.cs" />
     <Compile Include="Classes\Enums\ScriptType.cs" />
-    <Compile Include="Classes\HandlerConfig.cs" />
-    <Compile Include="Classes\HandlerParameters.cs" />
-    <Compile Include="Classes\RegexArgumentParser.cs" />
+    <Compile Include="Classes\CommandHandlerConfig.cs" />
+    <Compile Include="Classes\CommandHandlerParameters.cs" />
+    <Compile Include="Classes\RegexArguments.cs" />
     <Compile Include="Classes\ScriptHandlerConfig.cs" />
     <Compile Include="Classes\Utilities\FileUtils.cs" />
     <Compile Include="Classes\Utilities\HandlerUtils.cs" />
@@ -67,7 +68,6 @@
     <Compile Include="Classes\Utilities\WMIUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CommandHandler.cs" />
-    <Compile Include="Runtime\RegexArgumentParserRuntime.cs" />
     <Compile Include="ScriptHandler.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -76,6 +76,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File $(SolutionDir)scripts\setVersion.ps1 -path $(ProjectDir)Properties\AssemblyInfo.cs -versionFile $(SolutionDir)scripts\AssemblyInfo.xml</PreBuildEvent>

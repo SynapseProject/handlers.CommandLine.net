@@ -13,11 +13,15 @@ using Synapse.Core.Utilities;
 
 namespace Synapse.Handlers.CommandLine
 {
-    public partial class HandlerParameters
+    public class ScriptHandlerParameters
     {
         [XmlElement]
-        public ArgumentParserType Parser { get; set; }
+        public String Script { get; set; }
         [XmlElement]
-        public Object Arguments { get; set; }
+        public String ScriptBlock { get; set; }
+        [XmlElement]
+        public String Arguments { get; set; }
+        [XmlArrayItem(ElementName = "Expression")]
+        public List<RegexArguments> Expressions { get; set; }
     }
 }

@@ -15,7 +15,7 @@ using Synapse.Core.Utilities;
 
 namespace Synapse.Handlers.CommandLine
 {
-    public partial class HandlerConfig
+    public class CommandHandlerConfig
     {
         [XmlElement]
         public String RunOn { get; set; }

@@ -8,7 +8,7 @@ using Synapse.Handlers.CommandLine;
 public class ScriptHandler : HandlerRuntimeBase
 {
     ScriptHandlerConfig config = null;
-    String parameters = null;
+    ScriptHandlerParameters parameters = null;
 
     public override IHandlerRuntime Initialize(string configStr)
     {
@@ -19,37 +19,54 @@ public class ScriptHandler : HandlerRuntimeBase
     override public ExecuteResult Execute(HandlerStartInfo startInfo)
     {
         ExecuteResult result = null;
-        parameters = startInfo.Parameters;
+        if (startInfo.Parameters != null)
+            parameters = HandlerUtils.Deserialize<ScriptHandlerParameters>(startInfo.Parameters);
         String script = null;
 
         try
         {
             String command = null;
             String args = null;
-            String commandArgs = null;
+            bool isTempScript = false;
 
             switch (config.Type)
             {
                 case ScriptType.Powershell:
                     command = "powershell.exe";
-                    script = GetScript(config, "ps1");
-                    commandArgs = RegexArgumentParser.Parse(config.Args, config.Expressions);
-                    args = commandArgs + @" -File """ + script + @"""";
-                    if (!String.IsNullOrWhiteSpace(config.ScriptArgs))
+                    if (!String.IsNullOrWhiteSpace(parameters.Script))
                     {
-                        String scriptArgs = RegexArgumentParser.Parse(config.ScriptArgs, config.Expressions);
+                        isTempScript = false;
+                        script = parameters.Script;
+                    }
+                    else
+                    {
+                        isTempScript = true;
+                        script = CreateTempScriptFile(parameters.ScriptBlock, "ps1");
+                    }
+                    args = config.Arguments + @" -File """ + script + @"""";
+                    if (!String.IsNullOrWhiteSpace(parameters.Arguments))
+                    {
+                        String scriptArgs = RegexArguments.Parse(parameters.Arguments, parameters.Expressions);
                         args += " " + scriptArgs;
                     }
                     break;
 
                 case ScriptType.Batch:
                     command = "cmd.exe";
-                    script = GetScript(config, "bat");
-                    commandArgs = RegexArgumentParser.Parse(config.Args, config.Expressions);
-                    args = commandArgs + " " + script;
-                    if (!String.IsNullOrWhiteSpace(config.ScriptArgs))
+                    if (!String.IsNullOrWhiteSpace(parameters.Script))
                     {
-                        String scriptArgs = RegexArgumentParser.Parse(config.ScriptArgs, config.Expressions);
+                        isTempScript = false;
+                        script = parameters.Script;
+                    }
+                    else
+                    {
+                        isTempScript = true;
+                        script = CreateTempScriptFile(parameters.ScriptBlock, "bat");
+                    }
+                    args = config.Arguments + " " + script;
+                    if (!String.IsNullOrWhiteSpace(parameters.Arguments))
+                    {
+                        String scriptArgs = RegexArguments.Parse(parameters.Arguments, parameters.Expressions);
                         args += " " + scriptArgs;
                     }
 
@@ -67,7 +84,7 @@ public class ScriptHandler : HandlerRuntimeBase
             if (result.Status == StatusType.None)
                 result.Status = HandlerUtils.GetStatusType(result.ExitCode, config.ValidExitCodes);
 
-            if (File.Exists(script) && config.ParameterType == ParameterTypeType.Script)
+            if (File.Exists(script) && isTempScript)
                 File.Delete(script);
         }
         catch (Exception e)
@@ -83,20 +100,16 @@ public class ScriptHandler : HandlerRuntimeBase
         return result;
     }
 
-    public string GetScript(ScriptHandlerConfig config, String extension)
+    public string CreateTempScriptFile(String script, String extension)
     {
-        String script = null;
-        if (config.ParameterType == ParameterTypeType.Script)
-        {
-            script = FileUtils.GetTempFileUNC(config.RunOn, config.WorkingDirectory, extension);
-            if (script == null)
-                script = FileUtils.GetTempFileUNC(config.RunOn, Path.GetTempPath(), extension);
-            File.WriteAllText(script, parameters);
-        }
-        else
-            script = parameters;
+        String fileName = null;
 
-        return script;
+        fileName = FileUtils.GetTempFileUNC(config.RunOn, config.WorkingDirectory, extension);
+        if (fileName == null)
+            fileName = FileUtils.GetTempFileUNC(config.RunOn, Path.GetTempPath(), extension);
+        File.WriteAllText(fileName, script);
+
+        return fileName;
     }
 
     public void SynapseLogger(String label, String message)
