@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Xml;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 using Synapse.Core;
 using Synapse.Handlers.CommandLine;
@@ -25,6 +27,8 @@ public class CommandHandler : HandlerRuntimeBase
 
         try
         {
+            Validate();
+
             // Replace Any "Special" Handler Variables In Arguments or ReplaceWith elements
             variables = HandlerUtils.GatherVariables(this, startInfo);
             parameters.Arguments = HandlerUtils.ReplaceHandlerVariables(parameters.Arguments, variables);
@@ -56,6 +60,31 @@ public class CommandHandler : HandlerRuntimeBase
     public void SynapseLogger(String label, String message)
     {
         OnLogMessage(label, message);
+    }
+
+    private void Validate()
+    {
+        List<String> errors = new List<String>();
+
+        if (!String.IsNullOrWhiteSpace(config.WorkingDirectory))
+        {
+            String path = FileUtils.GetUNCPath(config.RunOn, config.WorkingDirectory);
+            if (!Directory.Exists(path))
+            {
+                errors.Add("Working Directory Not Found.");
+            }
+        }
+
+        if (errors.Count > 0)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Invalid Plan Specified :");
+            foreach (String error in errors)
+                sb.AppendLine(error);
+            throw new Exception(sb.ToString());
+        }
+        else
+            OnLogMessage("Validate", "Plan Sucessfully Validated");
     }
 
 }

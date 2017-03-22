@@ -2,6 +2,7 @@
 using System.Xml;
 using System.IO;
 using System.Collections.Generic;
+using System.Text;
 
 using Synapse.Core;
 using Synapse.Handlers.CommandLine;
@@ -30,6 +31,8 @@ public class ScriptHandler : HandlerRuntimeBase
             String command = null;
             String args = null;
             bool isTempScript = false;
+
+            Validate();
 
             // Replace Any "Special" Handler Variables In Arguments or ReplaceWith elements
             variables = HandlerUtils.GatherVariables(this, startInfo);
@@ -124,6 +127,45 @@ public class ScriptHandler : HandlerRuntimeBase
     public void SynapseLogger(String label, String message)
     {
         OnLogMessage(label, message);
+    }
+
+    private void Validate()
+    {
+        List<String> errors = new List<String>();
+
+        if ((!String.IsNullOrWhiteSpace(parameters.Script)) && (!String.IsNullOrWhiteSpace(parameters.ScriptBlock)))
+        {
+            errors.Add("Script and ScriptBlock Exist In Same Action.");
+        }
+
+        if (!String.IsNullOrWhiteSpace(config.WorkingDirectory))
+        {
+            String path = FileUtils.GetUNCPath(config.RunOn, config.WorkingDirectory);
+            if (!Directory.Exists(path))
+            {
+                errors.Add("Working Directory Not Found.  " + path);
+            }
+        }
+
+        if (!String.IsNullOrWhiteSpace(parameters.Script))
+        {
+            String file = FileUtils.GetUNCPath(config.RunOn, parameters.Script);
+            if (!File.Exists(file))
+            {
+                errors.Add("Script Not Found.  " + file);
+            }
+        }
+
+        if (errors.Count > 0)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Invalid Plan Specified :");
+            foreach (String error in errors)
+                sb.AppendLine("ERROR : " + error);
+            throw new Exception(sb.ToString());
+        }
+        else
+            OnLogMessage("Validate", "Plan Sucessfully Validated");
     }
 
 }
