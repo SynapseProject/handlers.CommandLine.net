@@ -30,10 +30,7 @@ namespace Synapse.Handlers.CommandLine
                 {
                     String replaceWith = replacement.ReplaceWith;
                     if (replacement.Encoding == EncodingType.Base64)
-                    {
-                        var bytes = System.Text.Encoding.UTF8.GetBytes(replaceWith);
-                        replaceWith = Convert.ToBase64String(bytes);
-                    }
+                        replaceWith = HandlerUtils.Base64Encode(replaceWith);
 
                     Regex regex = new Regex(replacement.Find);
                     args = regex.Replace(args, replaceWith);

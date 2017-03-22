@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml;
 using System.IO;
+using System.Collections.Generic;
 
 using Synapse.Core;
 using Synapse.Handlers.CommandLine;
@@ -9,6 +10,7 @@ public class ScriptHandler : HandlerRuntimeBase
 {
     ScriptHandlerConfig config = null;
     ScriptHandlerParameters parameters = null;
+    Dictionary<string, string> variables = null;
 
     public override IHandlerRuntime Initialize(string configStr)
     {
@@ -28,6 +30,13 @@ public class ScriptHandler : HandlerRuntimeBase
             String command = null;
             String args = null;
             bool isTempScript = false;
+
+            // Replace Any "Special" Handler Variables In Arguments or ReplaceWith elements
+            variables = HandlerUtils.GatherVariables(this, startInfo);
+            parameters.Arguments = HandlerUtils.ReplaceHandlerVariables(parameters.Arguments, variables);
+            if (parameters.Expressions != null)
+                foreach (RegexArguments expression in parameters.Expressions)
+                    expression.ReplaceWith = HandlerUtils.ReplaceHandlerVariables(expression.ReplaceWith, variables);
 
             switch (config.Type)
             {

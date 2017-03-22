@@ -214,7 +214,66 @@ namespace Synapse.Handlers.CommandLine
             return returnStatus;
         }
 
+        public static Dictionary<string, string> GatherVariables(HandlerRuntimeBase handler, HandlerStartInfo startInfo)
+        {
+            Dictionary<string, string> vars = new Dictionary<string, string>();
 
+            vars.Add("INSTANCEID", startInfo.InstanceId.ToString());
+            vars.Add("ISDRYRUN", startInfo.IsDryRun.ToString());
+            String parentExitData = startInfo.ParentExitData?.ToString();
+            vars.Add("PARENTEXITDATA", HandlerUtils.Base64Encode(parentExitData));
+            vars.Add("REQUESTNUMBER", startInfo.RequestNumber);
+            vars.Add("REQUESTUSER", startInfo.RequestUser);
+            vars.Add("ACTIONNAME", handler.ActionName);
+            vars.Add("RUNTIMETYPE", handler.RuntimeType);
 
+            return vars;
+        }
+
+        public static String ReplaceHandlerVariables(String str, Dictionary<string, string> variables)
+        { 
+            String args = str;
+            if (str != null)
+            {
+                Regex regex = new Regex("~~(.*?)~~");
+                MatchCollection matches = regex.Matches(str);
+                foreach (Match match in matches)
+                {
+                    String key = match.Groups[1].Value;
+                    if (!String.IsNullOrWhiteSpace(key))
+                    {
+                        key = key.Trim().ToUpper();
+                        if (variables.ContainsKey(key))
+                            args = args.Replace(match.Value, variables[key]);
+                    }
+                }
+            }
+
+            return args;
+        }
+
+        public static String Base64Encode(String str)
+        {
+            String encodedStr = null;
+            if (str != null)
+            {
+                var bytes = System.Text.Encoding.UTF8.GetBytes(str);
+                encodedStr = Convert.ToBase64String(bytes);
+            }
+
+            return encodedStr;
+        }
+
+        public static String Base64Decode(String encodedStr)
+        {
+            String decodedStr = null;
+            if (encodedStr != null)
+            {
+                byte[] data = Convert.FromBase64String(encodedStr);
+                decodedStr = Encoding.UTF8.GetString(data);
+            }
+
+            return decodedStr;
+        }
     }
 }
