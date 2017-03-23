@@ -80,7 +80,7 @@ public class CommandHandler : HandlerRuntimeBase
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Invalid Plan Specified :");
             foreach (String error in errors)
-                sb.AppendLine(error);
+                sb.AppendLine("ERROR : " + error);
             throw new Exception(sb.ToString());
         }
         else
