@@ -218,7 +218,9 @@ namespace Synapse.Handlers.CommandLine
         {
             Dictionary<string, string> vars = new Dictionary<string, string>();
 
-            vars.Add("INSTANCEID", startInfo.InstanceId.ToString());
+            vars.Add("INSTANCEID", startInfo.PlanInstanceId.ToString());
+            vars.Add("ACTIONINSTANCEID", startInfo.InstanceId.ToString());
+            vars.Add("PLANINSTANCEID", startInfo.PlanInstanceId.ToString());
             vars.Add("ISDRYRUN", startInfo.IsDryRun.ToString());
             String parentExitData = startInfo.ParentExitData?.ToString();
             vars.Add("PARENTEXITDATA", HandlerUtils.Base64Encode(parentExitData));
