@@ -16,6 +16,7 @@ namespace Synapse.Handlers.CommandLine
         public String CallbackLabel { get; set; }
         public int PollingIntervalMills { get; set; }
         public String Contents { get { return stdout.ToString(); } }
+        public bool SaveOutput { get; set; } = true;
 
         bool stop = false;
         Thread thread = null;
@@ -24,7 +25,7 @@ namespace Synapse.Handlers.CommandLine
 
         public LogTailer() { PollingIntervalMills = 1000; }
 
-        public LogTailer(String server, string fileName, Action<string, string> callback = null, String callbackLabel = null, int pollingIntervalMills = 1000)
+        public LogTailer(String server, string fileName, Action<string, string> callback = null, String callbackLabel = null, int pollingIntervalMills = 1000, bool saveOutput = true)
         {
             FileName = "\\\\" + server + "\\" + fileName.Replace(':', '$');
 
@@ -35,9 +36,10 @@ namespace Synapse.Handlers.CommandLine
 
             CallbackLabel = callbackLabel;
             PollingIntervalMills = pollingIntervalMills;
+            SaveOutput = saveOutput;
         }
 
-        public LogTailer(String fileName, Action<string, string> callback = null, String callbackLabel = null)
+        public LogTailer(String fileName, Action<string, string> callback = null, String callbackLabel = null, int pollingIntervalMills = 1000, bool saveOutput = true)
         {
             FileName = fileName;
 
@@ -47,8 +49,10 @@ namespace Synapse.Handlers.CommandLine
                 Callback = LogTailer.ConsoleWriter;
 
             CallbackLabel = callbackLabel;
+            PollingIntervalMills = pollingIntervalMills;
+            SaveOutput = saveOutput;
         }
-        
+
         public void Start()
         {
             thread = new Thread(this.TailLog);
@@ -123,7 +127,8 @@ namespace Synapse.Handlers.CommandLine
                             char ch = (char)i;
                             if (ch == '\r' || ch == '\n')
                             {
-                                stdout.AppendLine(line);
+                                if (SaveOutput)
+                                    stdout.AppendLine(line);
                                 Callback?.Invoke(CallbackLabel, line);
 
                                 line = String.Empty;
@@ -182,7 +187,8 @@ namespace Synapse.Handlers.CommandLine
                         char ch = (char)i;
                         if (ch == '\r' || ch == '\n')
                         {
-                            stdout.AppendLine(line);
+                            if (SaveOutput)
+                                stdout.AppendLine(line);
                             Callback?.Invoke(CallbackLabel, line);
 
                             line = String.Empty;

@@ -31,6 +31,8 @@ namespace Synapse.Handlers.CommandLine
         public bool KillRemoteProcessOnTimeout { get; set; }
         [XmlArrayItem(ElementName = "ExitCode")]
         public List<String> ValidExitCodes { get; set; }
+        [XmlElement]
+        public bool ReturnStdout { get; set; } = true;
 
     }
 

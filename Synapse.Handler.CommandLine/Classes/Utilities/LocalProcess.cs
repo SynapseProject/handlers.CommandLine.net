@@ -12,7 +12,7 @@ namespace Synapse.Handlers.CommandLine
 {
     class LocalProcess
     {
-        public static ExecuteResult RunCommand(String command, String args, String remoteWorkingDirectory, long timeoutMills = 0, StatusType timeoutStatus = StatusType.Failed, Action<string, string> callback = null, String callbackLabel = null, bool dryRun = false)
+        public static ExecuteResult RunCommand(String command, String args, String remoteWorkingDirectory, long timeoutMills = 0, StatusType timeoutStatus = StatusType.Failed, Action<string, string> callback = null, String callbackLabel = null, bool dryRun = false, bool returnStdout = true)
         {
             StringBuilder stdout = new StringBuilder();
             ExecuteResult result = new ExecuteResult();
@@ -41,9 +41,12 @@ namespace Synapse.Handlers.CommandLine
                     while (!process.StandardOutput.EndOfStream)
                     {
                         String line = process.StandardOutput.ReadLine();
-                        lock (stdout)
+                        if (returnStdout)
                         {
-                            stdout.AppendLine(line);
+                            lock (stdout)
+                            {
+                                stdout.AppendLine(line);
+                            }
                         }
                         callback?.Invoke(callbackLabel, line);
                     }
@@ -55,9 +58,12 @@ namespace Synapse.Handlers.CommandLine
                     while (!process.StandardError.EndOfStream)
                     {
                         String line = process.StandardError.ReadLine();
-                        lock (stdout)
+                        if (returnStdout)
                         {
-                            stdout.AppendLine(line);
+                            lock (stdout)
+                            {
+                                stdout.AppendLine(line);
+                            }
                         }
                         callback?.Invoke(callbackLabel, line);
                     }

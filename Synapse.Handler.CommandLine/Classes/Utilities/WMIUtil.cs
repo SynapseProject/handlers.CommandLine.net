@@ -16,7 +16,7 @@ namespace Synapse.Handlers.CommandLine
     {
         #region Public Methods - RunCommand
 
-        public static ExecuteResult RunCommand(String command, String args, String server, String remoteWorkingDirectory, long timeoutMills, StatusType timeoutStatus = StatusType.Failed, bool killProcessOnTimeout = true, Action<string, string> callback = null, string callbackLabel = null, bool dryRun = false)
+        public static ExecuteResult RunCommand(String command, String args, String server, String remoteWorkingDirectory, long timeoutMills, StatusType timeoutStatus = StatusType.Failed, bool killProcessOnTimeout = true, Action<string, string> callback = null, string callbackLabel = null, bool dryRun = false, bool returnStdout = true)
         {
             ExecuteResult result = new ExecuteResult();
             if (callback == null)
@@ -63,7 +63,7 @@ namespace Synapse.Handlers.CommandLine
                             processId = (uint)mbo["ProcessId"];
 
                             // Start Tailing Output Log
-                            LogTailer tailer = new LogTailer(server, Path.Combine(remoteWorkingDirectory, stdOutErrFile), callback, callbackLabel);
+                            LogTailer tailer = new LogTailer(server, Path.Combine(remoteWorkingDirectory, stdOutErrFile), callback, callbackLabel, 1000, returnStdout);
                             tailer.Start();
 
                             // Wait For Process To Finish or Timeout To Be Reached
