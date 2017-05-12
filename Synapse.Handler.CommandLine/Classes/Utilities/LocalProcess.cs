@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Security;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
@@ -12,7 +13,7 @@ namespace Synapse.Handlers.CommandLine
 {
     class LocalProcess
     {
-        public static ExecuteResult RunCommand(String command, String args, String remoteWorkingDirectory, long timeoutMills = 0, StatusType timeoutStatus = StatusType.Failed, Action<string, string> callback = null, String callbackLabel = null, bool dryRun = false, bool returnStdout = true)
+        public static ExecuteResult RunCommand(String command, String args, String remoteWorkingDirectory, long timeoutMills = 0, StatusType timeoutStatus = StatusType.Failed, Action<string, string> callback = null, String callbackLabel = null, bool dryRun = false, bool returnStdout = true, String runAsDomain = null, String runAsUsername = null, String runasPassword = null)
         {
             StringBuilder stdout = new StringBuilder();
             ExecuteResult result = new ExecuteResult();
@@ -29,6 +30,19 @@ namespace Synapse.Handlers.CommandLine
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.UseShellExecute = false;
+
+            if (runAsDomain != null)
+                process.StartInfo.Domain = runAsDomain;
+            if (runAsUsername != null)
+            process.StartInfo.UserName = runAsUsername;
+            if (runasPassword != null)
+            {
+                SecureString ssPwd = new SecureString();
+                for (int i = 0; i < runasPassword.Length; i++)
+                    ssPwd.AppendChar(runasPassword[i]);
+                process.StartInfo.Password = ssPwd;
+            }
+
 
             callback?.Invoke(callbackLabel, "Starting Command : " + command + " " + args);
 
