@@ -80,9 +80,16 @@ public class CommandHandler : HandlerRuntimeBase
 
             String args = RegexArguments.Parse(parameters.Arguments, parameters.Expressions);
             if (String.IsNullOrEmpty(config.RunOn))
-                result = LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, SynapseLogger, null, startInfo.IsDryRun, config.ReturnStdout);
+            {
+                SecurityContext runAs = startInfo.RunAs;
+                if (startInfo.RunAs.HasCrypto)
+                    runAs = startInfo.RunAs.GetCryptoValues(startInfo.RunAs.Crypto, false);
+                result = LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, SynapseLogger, null, startInfo.IsDryRun, config.ReturnStdout, runAs.Domain, runAs.UserName, runAs.Password);
+            }
             else
+            {
                 result = WMIUtil.RunCommand(config.Command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, config.KillRemoteProcessOnTimeout, SynapseLogger, config.RunOn, startInfo.IsDryRun, config.ReturnStdout);
+            }
 
             if (result.Status == StatusType.None)
                 result.Status = HandlerUtils.GetStatusType(result.ExitCode, config.ValidExitCodes);
