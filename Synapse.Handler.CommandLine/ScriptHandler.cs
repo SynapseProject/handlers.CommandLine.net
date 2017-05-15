@@ -19,6 +19,46 @@ public class ScriptHandler : HandlerRuntimeBase
         return base.Initialize(configStr);
     }
 
+    public override object GetConfigInstance()
+    {
+
+        ScriptHandlerConfig config = new ScriptHandlerConfig();
+
+        config.RunOn = @"someserver.domain.com";
+        config.WorkingDirectory = @"C:\Temp";
+        config.Type = ScriptType.Powershell;
+        config.Arguments = @"-ExecutionPolicy Bypass";
+        config.TimeoutMills = 60000;
+        config.TimeoutStatus = StatusType.Failed;
+        config.KillRemoteProcessOnTimeout = false;
+        config.ReturnStdout = true;
+        config.ValidExitCodes = new List<string>();
+
+        config.ValidExitCodes.Add("EQ 0 Success");
+        config.ValidExitCodes.Add("NE 0 Failure");
+
+        return config;
+    }
+
+    public override object GetParametersInstance()
+    {
+        ScriptHandlerParameters parms = new ScriptHandlerParameters();
+
+        parms.Script = @"C:\Temp\test.ps1";
+        parms.Arguments = @"-p1 xxx -p2 yyy -p3 zzz";
+
+        parms.Expressions = new List<RegexArguments>();
+
+        RegexArguments args = new RegexArguments();
+        args.Find = "xxx";
+        args.ReplaceWith = "aaa";
+        args.Encoding = EncodingType.Base64;
+
+        parms.Expressions.Add(args);
+
+        return parms;
+    }
+
     override public ExecuteResult Execute(HandlerStartInfo startInfo)
     {
         ExecuteResult result = null;

@@ -19,6 +19,48 @@ public class CommandHandler : HandlerRuntimeBase
         return base.Initialize(configStr);
     }
 
+    public override object GetConfigInstance()
+    {
+        CommandHandlerConfig config = new CommandHandlerConfig();
+
+        config.RunOn = @"someserver.domain.com";
+        config.WorkingDirectory = @"C:\Temp";
+        config.Command = @"powershell.exe";
+        config.TimeoutMills = 60000;
+        config.TimeoutStatus = StatusType.Failed;
+        config.KillRemoteProcessOnTimeout = false;
+        config.ReturnStdout = true;
+        config.ValidExitCodes = new List<string>();
+
+        config.ValidExitCodes.Add("EQ 0 Success");
+        config.ValidExitCodes.Add("NE 0 Failure");
+
+        return config;
+    }
+
+    public override object GetParametersInstance()
+    {
+        CommandHandlerParameters parms = new CommandHandlerParameters();
+
+        parms.Arguments = @"-ExecutionPolicy Bypass -File C:\Temp\test.ps1 -p1 ""Hello World"" -p2 ""bbb"" -p3 ""ccc""";
+
+        parms.Expressions = new List<RegexArguments>();
+        RegexArguments args = new RegexArguments();
+        args.Find = "bbb";
+        args.ReplaceWith = "yyy";
+        args.Encoding = EncodingType.None;
+        parms.Expressions.Add(args);
+
+        RegexArguments args2 = new RegexArguments();
+        args2.Find = "ccc";
+        args2.ReplaceWith = "zzz";
+        args2.Encoding = EncodingType.Base64;
+        parms.Expressions.Add(args2);
+
+
+        return parms;
+    }
+
     override public ExecuteResult Execute(HandlerStartInfo startInfo)
     {
         ExecuteResult result = null;
