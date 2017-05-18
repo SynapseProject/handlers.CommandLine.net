@@ -82,9 +82,9 @@ public class CommandHandler : HandlerRuntimeBase
             if (String.IsNullOrEmpty(config.RunOn))
             {
                 SecurityContext runAs = startInfo.RunAs;
-                if (startInfo.RunAs.HasCrypto)
+                if (runAs != null && runAs.HasCrypto)
                     runAs = startInfo.RunAs.GetCryptoValues(startInfo.RunAs.Crypto, false);
-                result = LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, SynapseLogger, null, startInfo.IsDryRun, config.ReturnStdout, runAs.Domain, runAs.UserName, runAs.Password);
+                result = LocalProcess.RunCommand(config.Command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, SynapseLogger, null, startInfo.IsDryRun, config.ReturnStdout, runAs?.Domain, runAs?.UserName, runAs?.Password);
             }
             else
             {
