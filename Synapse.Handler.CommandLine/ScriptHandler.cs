@@ -115,7 +115,7 @@ public class ScriptHandler : HandlerRuntimeBase
                         isTempScript = true;
                         script = CreateTempScriptFile(parameters.ScriptBlock, "bat");
                     }
-                    args = config.Arguments + " " + script;
+                    args = config.Arguments + @" """ + script + @"""";
                     if (!String.IsNullOrWhiteSpace(parameters.Arguments))
                     {
                         String scriptArgs = RegexArguments.Parse(parameters.Arguments, parameters.Expressions);
@@ -163,9 +163,9 @@ public class ScriptHandler : HandlerRuntimeBase
     {
         String fileName = null;
 
-        fileName = FileUtils.GetTempFileUNC(config.RunOn, config.WorkingDirectory, extension);
+        fileName = FileUtils.GetTempFileFull(config.RunOn, config.WorkingDirectory, extension);
         if (fileName == null)
-            fileName = FileUtils.GetTempFileUNC(config.RunOn, Path.GetTempPath(), extension);
+            fileName = FileUtils.GetTempFileFull(config.RunOn, Path.GetTempPath(), extension);
         File.WriteAllText(fileName, script);
 
         return fileName;

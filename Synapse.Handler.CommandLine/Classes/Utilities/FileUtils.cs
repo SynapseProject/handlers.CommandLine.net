@@ -37,13 +37,18 @@ namespace Synapse.Handlers.CommandLine
                 return file.Replace(".", "") + "." + extension;
         }
 
-        public static String GetTempFileUNC(String server, String localPath, String extension)
+        public static String GetTempFileFull(String server, String localPath, String extension)
         {
-            String path = GetUNCPath(server, localPath);
             String file = null;
+            String path = localPath;
+
+            if (!String.IsNullOrWhiteSpace(server))
+                path = GetUNCPath(server, localPath);
+
             if (path != null)
             {
-                file = path + @"\" + GetTempFile(extension);
+                // file = path + @"\" + GetTempFile(extension);
+                file = Path.Combine(path, GetTempFile(extension));
             }
             return file;
         }
