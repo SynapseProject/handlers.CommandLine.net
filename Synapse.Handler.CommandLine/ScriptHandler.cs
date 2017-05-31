@@ -128,16 +128,20 @@ public class ScriptHandler : HandlerRuntimeBase
                     throw new Exception("Unknown ScriptType [" + config.Type.ToString() + "] Received.");
             }
 
+            bool isDryRun = startInfo.IsDryRun && !(config.SupportsDryRun);
+            if (startInfo.IsDryRun && config.SupportsDryRun)
+                OnLogMessage("Execute", "DryRun Flag is set, but plan config indicates the script supports DryRun.  Script will execute.");
+
             if (String.IsNullOrEmpty(config.RunOn))
             {
                 SecurityContext runAs = startInfo.RunAs;
                 if (runAs!= null && runAs.HasCrypto)
                     runAs = startInfo.RunAs.GetCryptoValues(startInfo.RunAs.Crypto, false);
-                result = LocalProcess.RunCommand(command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, SynapseLogger, null, startInfo.IsDryRun, config.ReturnStdout, runAs?.Domain, runAs?.UserName, runAs?.Password);
+                result = LocalProcess.RunCommand(command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, SynapseLogger, null, isDryRun, config.ReturnStdout, runAs?.Domain, runAs?.UserName, runAs?.Password);
             }
             else
             {
-                result = WMIUtil.RunCommand(command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, config.KillRemoteProcessOnTimeout, SynapseLogger, config.RunOn, startInfo.IsDryRun, config.ReturnStdout);
+                result = WMIUtil.RunCommand(command, args, config.RunOn, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, config.KillRemoteProcessOnTimeout, SynapseLogger, config.RunOn, isDryRun, config.ReturnStdout);
             }
 
             if (result.Status == StatusType.None)

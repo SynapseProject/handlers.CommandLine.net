@@ -35,6 +35,8 @@ namespace Synapse.Handlers.CommandLine
         public List<String> ValidExitCodes { get; set; }
         [XmlElement]
         public bool ReturnStdout { get; set; } = true;
+        [XmlElement]
+        public bool SupportsDryRun { get; set; } = false;
 
     }
 
