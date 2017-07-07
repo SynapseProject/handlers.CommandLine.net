@@ -72,6 +72,8 @@ public class ScriptHandler : HandlerRuntimeBase
             String args = null;
             bool isTempScript = false;
 
+            OnLogMessage( "Execute", $"Running Handler As User [{System.Security.Principal.WindowsIdentity.GetCurrent().Name}]" );
+
             Validate();
 
             // Replace Any "Special" Handler Variables In Arguments or ReplaceWith elements
