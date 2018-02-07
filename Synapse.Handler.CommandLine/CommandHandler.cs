@@ -125,7 +125,7 @@ public class CommandHandler : HandlerRuntimeBase
         if (!String.IsNullOrWhiteSpace(config.WorkingDirectory))
         {
             String path = FileUtils.GetUNCPath(config.RunOn, config.WorkingDirectory);
-            if (!Directory.Exists(path))
+            if (!Directory.Exists(path) && !Directory.Exists(config.WorkingDirectory))
             {
                 errors.Add("Working Directory Not Found.");
             }
