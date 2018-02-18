@@ -51,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Enums\EncodingType.cs" />
     <Compile Include="Classes\ScriptHandlerParameters.cs" />
     <Compile Include="Classes\Enums\ScriptType.cs" />
     <Compile Include="Classes\CommandHandlerConfig.cs" />

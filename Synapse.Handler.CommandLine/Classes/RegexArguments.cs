@@ -9,8 +9,6 @@ using System.IO;
 using System.Xml.Serialization;
 using System.Xml;
 
-using Synapse.Core;
-
 namespace Synapse.Handlers.CommandLine
 {
     public class RegexArguments

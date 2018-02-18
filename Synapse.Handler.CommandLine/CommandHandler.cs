@@ -48,13 +48,13 @@ public class CommandHandler : HandlerRuntimeBase
         RegexArguments args = new RegexArguments();
         args.Find = "bbb";
         args.ReplaceWith = "yyy";
-        args.Encoding = EncodingType.None;
+        args.Encoding = Synapse.Handlers.CommandLine.EncodingType.None;
         parms.Expressions.Add(args);
 
         RegexArguments args2 = new RegexArguments();
         args2.Find = "ccc";
         args2.ReplaceWith = "zzz";
-        args2.Encoding = EncodingType.Base64;
+        args2.Encoding = Synapse.Handlers.CommandLine.EncodingType.Base64;
         parms.Expressions.Add(args2);
 
 

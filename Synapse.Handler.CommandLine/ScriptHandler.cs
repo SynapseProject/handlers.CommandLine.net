@@ -52,7 +52,7 @@ public class ScriptHandler : HandlerRuntimeBase
         RegexArguments args = new RegexArguments();
         args.Find = "xxx";
         args.ReplaceWith = "aaa";
-        args.Encoding = EncodingType.Base64;
+        args.Encoding = Synapse.Handlers.CommandLine.EncodingType.Base64;
 
         parms.Expressions.Add(args);
 
