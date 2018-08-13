@@ -65,12 +65,12 @@ public class ScriptHandler : HandlerRuntimeBase
         if (startInfo.Parameters != null)
             parameters = HandlerUtils.Deserialize<ScriptHandlerParameters>(startInfo.Parameters);
         String script = null;
+        bool isTempScript = false;
 
         try
         {
             String command = null;
             String args = null;
-            bool isTempScript = false;
 
             OnLogMessage( "Execute", $"Running Handler As User [{System.Security.Principal.WindowsIdentity.GetCurrent().Name}]" );
 
@@ -156,7 +156,7 @@ public class ScriptHandler : HandlerRuntimeBase
         {
             Console.WriteLine(e.Message);
             Console.WriteLine(e.StackTrace);
-            if (File.Exists(script))
+            if (File.Exists(script) && isTempScript)
                 File.Delete(script);
             throw e;
         }

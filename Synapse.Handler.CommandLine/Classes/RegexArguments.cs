@@ -30,11 +30,17 @@ namespace Synapse.Handlers.CommandLine
                 foreach (RegexArguments replacement in expressions)
                 {
                     String replaceWith = replacement.ReplaceWith;
-                    if (replacement.Encoding == EncodingType.Base64)
-                        replaceWith = HandlerUtils.Base64Encode(replaceWith);
-
                     Regex regex = new Regex(replacement.Find);
-                    args = regex.Replace(args, replaceWith);
+
+                    if (replaceWith == null)
+                        args = regex.Replace(args, "");
+                    else
+                    {
+                        if (replacement.Encoding == EncodingType.Base64)
+                            replaceWith = HandlerUtils.Base64Encode(replaceWith);
+
+                        args = regex.Replace(args, replaceWith);
+                    }
                 }
             }
 
