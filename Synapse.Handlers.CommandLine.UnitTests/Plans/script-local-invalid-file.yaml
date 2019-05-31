@@ -1,0 +1,22 @@
+Name: SamplePlan
+Actions:
+- Name: Action001
+  Handler:
+    Type: synapse.handlers.CommandLine:ScriptHandler
+    Config: 
+      Type: Yaml
+      Values:
+        WorkingDirectory: C:\temp
+        Type: Batch
+        Arguments: /c
+        TimeoutMills: 10000
+        TimeoutStatus: Failed
+        KillRemoteProcessOnTimeout: true
+        ReturnStdout: true
+        ValidExitCodes:
+        - "EqualTo 0 Complete"
+        ReturnStdout: true
+  Parameters:
+    Type: Yaml
+    Values:
+      Script: C:\NoSuchDir\test.bat

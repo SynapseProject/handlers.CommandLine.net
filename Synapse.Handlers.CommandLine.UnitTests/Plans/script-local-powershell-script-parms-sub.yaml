@@ -1,0 +1,29 @@
+Name: SamplePlan
+Actions:
+- Name: Action001
+  Handler:
+    Type: synapse.handlers.CommandLine:ScriptHandler
+    Config: 
+      Type: Yaml
+      Values:
+        WorkingDirectory: C:\Temp
+        Type: Powershell
+        Arguments: -ExecutionPolicy Bypass
+        TimeoutMills: 10000
+        TimeoutStatus: Failed
+        KillRemoteProcessOnTimeout: true
+        ReturnStdout: true
+        ValidExitCodes:
+        - "EqualTo 0 Complete"
+        ReturnStdout: true
+  Parameters:
+    Type: Yaml
+    Values:
+      ScriptBlock: |
+        Param($p1, $p2, $p3)
+        Write-Host $p1 $p2 $p3
+      Arguments: -p1 "~~IsDryRun~~" -p2 "bbb" -p3 "ccc"
+      Expressions:
+      - Find: bbb
+        ReplaceWith: Action Name = ~~actionName~~
+      

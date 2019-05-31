@@ -1,0 +1,21 @@
+Name: SamplePlan
+Actions:
+- Name: Action001
+  Handler:
+    Type: synapse.handlers.CommandLine:CommandHandler
+    Config: 
+      Type: Yaml
+      Values:
+        WorkingDirectory: C:\Temp
+        Command: powershell.exe
+        TimeoutMills: 1000
+        TimeoutStatus: Cancelled
+        KillRemoteProcessOnTimeout: true
+        ReturnStdout: true
+        ValidExitCodes:
+        - "EqualTo 0 Complete"
+        ReturnStdout: true
+  Parameters:
+    Type: Yaml
+    Values:
+      Arguments: -ExecutionPolicy Bypass -File "$INPUT_DIR__\sleep.ps1"

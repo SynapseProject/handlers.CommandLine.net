@@ -136,10 +136,12 @@ public class ScriptHandler : HandlerRuntimeBase
 
             if (String.IsNullOrEmpty(config.RunOn))
             {
-                SecurityContext runAs = startInfo.RunAs;
-                if (runAs!= null && runAs.HasCrypto)
-                    runAs = startInfo.RunAs.GetCryptoValues(startInfo.RunAs.Crypto, false);
-                result = LocalProcess.RunCommand(command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, SynapseLogger, null, isDryRun, config.ReturnStdout, runAs?.Domain, runAs?.UserName, runAs?.Password);
+                //SecurityContext runAs = startInfo.RunAs;
+                //if (runAs!= null && runAs.HasCrypto)
+                //    runAs = startInfo.RunAs.GetCryptoValues(startInfo.RunAs.Crypto, false);
+                //result = LocalProcess.RunCommand(command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, SynapseLogger, null, isDryRun, config.ReturnStdout, runAs?.Domain, runAs?.UserName, runAs?.Password);
+                // temporarily ignore RunAs
+                result = LocalProcess.RunCommand( command, args, config.WorkingDirectory, config.TimeoutMills, config.TimeoutStatus, SynapseLogger, null, isDryRun, config.ReturnStdout );
             }
             else
             {
@@ -194,7 +196,7 @@ public class ScriptHandler : HandlerRuntimeBase
         if (!String.IsNullOrWhiteSpace(config.WorkingDirectory))
         {
             String path = FileUtils.GetUNCPath(config.RunOn, config.WorkingDirectory);
-            if (!Directory.Exists(path))
+            if( !Directory.Exists( path ) )
             {
                 errors.Add("Working Directory Not Found.  " + path);
             }
@@ -202,8 +204,8 @@ public class ScriptHandler : HandlerRuntimeBase
 
         if (!String.IsNullOrWhiteSpace(parameters.Script))
         {
-            String file = FileUtils.GetUNCPath(config.RunOn, parameters.Script);
-            if (!File.Exists(file))
+            String file = FileUtils.GetUNCPath( config.RunOn, parameters.Script );
+            if( !File.Exists( file ) )
             {
                 errors.Add("Script Not Found.  " + file);
             }
